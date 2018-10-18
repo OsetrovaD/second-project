@@ -1,0 +1,6 @@
+.idea
+**/target
+*.iml
+checkstyle.xml
+web.xml
+**/resources
