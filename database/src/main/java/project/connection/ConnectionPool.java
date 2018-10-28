@@ -10,7 +10,7 @@ import java.sql.SQLException;
 @UtilityClass
 public class ConnectionPool {
 
-    private static DataSource DATA_SOURCE;
+    private static DataSource dataSource;
 
     static {
         initConnectionPool();
@@ -23,10 +23,10 @@ public class ConnectionPool {
         poolProperties.setUsername(PropertyManager.get("db.username"));
         poolProperties.setPassword(PropertyManager.get("db.password"));
         poolProperties.setMaxActive(Integer.parseInt(PropertyManager.get("db.pool.size")));
-        DATA_SOURCE = new DataSource(poolProperties);
+        dataSource = new DataSource(poolProperties);
     }
 
     public static Connection getConnection() throws SQLException {
-        return DATA_SOURCE.getConnection();
+        return dataSource.getConnection();
     }
 }

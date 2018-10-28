@@ -2,6 +2,7 @@ package servlet.user;
 
 import project.entity.User;
 import service.UserService;
+import util.JspPathUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -19,6 +20,6 @@ public class UserServlet extends HttpServlet {
         User user = UserService.getInstance().getById(Long.valueOf(userId));
         req.setAttribute("user", user);
 
-        getServletContext().getRequestDispatcher("/WEB-INF/jsp/user-info.jsp").forward(req, resp);
+        getServletContext().getRequestDispatcher(JspPathUtil.getPath("user-info")).forward(req, resp);
     }
 }
