@@ -2,8 +2,8 @@ package project.entity;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
 import org.junit.Test;
+import project.connectionutil.ConnectionUtil;
 
 import java.io.Serializable;
 
@@ -11,7 +11,7 @@ import static org.junit.Assert.assertNotNull;
 
 public class SubgenreTest {
 
-    private static final SessionFactory SESSION_FACTORY = new Configuration().configure().buildSessionFactory();
+    private static final SessionFactory SESSION_FACTORY = ConnectionUtil.getSessionFactory();
 
     @Test
     public void checkSaveAndGet() {

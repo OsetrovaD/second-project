@@ -2,8 +2,8 @@ package project.entity;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
 import org.junit.Test;
+import project.connectionutil.ConnectionUtil;
 import project.entity.embeddable.GameGamePlatform;
 import project.entity.embeddable.OrderGamePrice;
 import project.entity.enumonly.Condition;
@@ -14,11 +14,13 @@ import project.entity.enumonly.PaymentForm;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
 public class OrderTest {
 
-    private static final SessionFactory SESSION_FACTORY = new Configuration().configure().buildSessionFactory();
+    private static final SessionFactory SESSION_FACTORY = ConnectionUtil.getSessionFactory();
 
     @Test
     public void checkSaveAndGet() {
@@ -70,7 +72,7 @@ public class OrderTest {
 
             session.refresh(order);
 
-            System.out.println(order.getItemsInOrder());
+            assertThat(order.getItemsInOrder(), hasSize(1));
         }
     }
 }

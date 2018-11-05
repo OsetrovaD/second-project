@@ -2,8 +2,8 @@ package project.entity;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
 import org.junit.Test;
+import project.connectionutil.ConnectionUtil;
 import project.entity.embeddable.GameGamePlatform;
 import project.entity.embeddable.GameScreenshot;
 import project.entity.enumonly.AgeLimit;
@@ -13,11 +13,13 @@ import project.entity.enumonly.Role;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
 public class GameTest {
 
-    private static final SessionFactory SESSION_FACTORY = new Configuration().configure().buildSessionFactory();
+    private static final SessionFactory SESSION_FACTORY = ConnectionUtil.getSessionFactory();
 
     @Test
     public void checkSaveAndGet() {
@@ -61,7 +63,7 @@ public class GameTest {
 
             session.refresh(game);
 
-            System.out.println(game.getScreenshots());
+            assertThat(game.getScreenshots(), hasSize(1));
         }
     }
 
@@ -86,7 +88,7 @@ public class GameTest {
             session.save(comment);
 
             session.refresh(game);
-            System.out.println(game.getComments());
+            assertThat(game.getComments(), hasSize(1));
         }
     }
 
@@ -106,7 +108,7 @@ public class GameTest {
             session.save(gamePrice);
 
             session.refresh(game);
-            System.out.println(game.getGamePrices());
+            assertThat(game.getGamePrices(), hasSize(1));
         }
     }
 }

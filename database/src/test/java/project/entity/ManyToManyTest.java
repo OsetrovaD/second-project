@@ -2,15 +2,18 @@ package project.entity;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
 import org.junit.Test;
+import project.connectionutil.ConnectionUtil;
 import project.entity.enumonly.AgeLimit;
 
 import java.io.Serializable;
 
+import static org.hamcrest.Matchers.hasSize;
+import static org.junit.Assert.assertThat;
+
 public class ManyToManyTest {
 
-    private static final SessionFactory SESSION_FACTORY = new Configuration().configure().buildSessionFactory();
+    private static final SessionFactory SESSION_FACTORY = ConnectionUtil.getSessionFactory();
 
     @Test
     public void checkInsertByGameIntoGameSubgenre() {
@@ -46,8 +49,8 @@ public class ManyToManyTest {
 
             Game savedGame = session.find(Game.class, savedGameId);
 
-            System.out.println(savedGame.getSubgenres());
-            System.out.println(subgenre.getGames());
+            assertThat(savedGame.getSubgenres(), hasSize(1));
+            assertThat(subgenre.getGames(), hasSize(1));
         }
     }
 
@@ -86,8 +89,8 @@ public class ManyToManyTest {
 
             Subgenre savedSubgenre = session.find(Subgenre.class, savedSubgenreId);
 
-            System.out.println(game.getSubgenres());
-            System.out.println(savedSubgenre.getGames());
+            assertThat(game.getSubgenres(), hasSize(1));
+            assertThat(savedSubgenre.getGames(), hasSize(1));
         }
     }
 }

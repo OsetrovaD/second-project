@@ -24,7 +24,6 @@ import javax.persistence.Table;
 public class Screenshot {
 
     @EmbeddedId
-    @Column(unique = true)
     private GameScreenshot gameScreenshot;
 
     @ManyToOne

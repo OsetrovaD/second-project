@@ -2,8 +2,8 @@ package project.entity;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
 import org.junit.Test;
+import project.connectionutil.ConnectionUtil;
 import project.entity.embeddable.GameGamePlatform;
 import project.entity.enumonly.GamePlatform;
 
@@ -13,7 +13,7 @@ import static org.junit.Assert.assertNotNull;
 
 public class GamePriceTest {
 
-    private static final SessionFactory SESSION_FACTORY = new Configuration().configure().buildSessionFactory();
+    private static final SessionFactory SESSION_FACTORY = ConnectionUtil.getSessionFactory();
 
     @Test
     public void checkSaveAdnGet() {

@@ -2,15 +2,16 @@ package project.entity;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
 import org.junit.Test;
+import project.connectionutil.ConnectionUtil;
 import project.entity.embeddable.GameScreenshot;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class ScreenshotTest {
 
-    private static final SessionFactory SESSION_FACTORY = new Configuration().configure().buildSessionFactory();
+    private static final SessionFactory SESSION_FACTORY = ConnectionUtil.getSessionFactory();
 
     @Test
     public void checkSaveAndGet() {
@@ -54,8 +55,7 @@ public class ScreenshotTest {
             session.getTransaction().commit();
 
             session.refresh(screenshot);
-
-            System.out.println(screenshot.getGame());
+            assertEquals(game, screenshot.getGame());
         }
     }
 }

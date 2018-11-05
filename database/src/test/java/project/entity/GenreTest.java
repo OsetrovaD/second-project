@@ -2,16 +2,18 @@ package project.entity;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
 import org.junit.Test;
+import project.connectionutil.ConnectionUtil;
 
 import java.io.Serializable;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
 public class GenreTest {
 
-    private static final SessionFactory SESSION_FACTORY = new Configuration().configure().buildSessionFactory();
+    private static final SessionFactory SESSION_FACTORY = ConnectionUtil.getSessionFactory();
 
     @Test
     public void checkSaveAndGet() {
@@ -44,7 +46,7 @@ public class GenreTest {
             session.save(subgenre);
 
             session.refresh(genre);
-            System.out.println(genre.getSubgenres());
+            assertThat(genre.getSubgenres(), hasSize(1));
         }
     }
 }
