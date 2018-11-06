@@ -67,6 +67,9 @@ public abstract class User extends BaseEntity<Long> {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private Set<Comment> comments = new HashSet<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private Set<Order> orders = new HashSet<>();
+
     public User(String login, String password, String email, Role role) {
         this.login = login;
         this.password = password;

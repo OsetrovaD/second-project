@@ -16,6 +16,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.time.LocalDate;
@@ -35,6 +36,7 @@ import java.util.Set;
             "date",
             "deliveryDate",
             "itemsInOrder",
+            "user"
         })
 @Entity
 @Table(name = "order_data", schema = "computer_games_e_shop_storage")
@@ -57,6 +59,10 @@ public class Order extends BaseEntity<Long> {
 
     @Column(name = "delivery_date")
     private LocalDate deliveryDate;
+
+    @Column(name = "user_id")
+    @ManyToOne
+    private User user;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private Set<ItemInOrder> itemsInOrder = new HashSet<>();
