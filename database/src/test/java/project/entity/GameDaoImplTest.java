@@ -1,7 +1,9 @@
 package project.entity;
 
+import org.hamcrest.Matchers;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import project.connectionutil.ConnectionUtil;
@@ -17,6 +19,7 @@ import java.util.List;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -106,8 +109,8 @@ public class GameDaoImplTest {
     @Test
     public void findByIdTest() {
         try (Session session = FACTORY.openSession()) {
-            Game game = GameDaoImpl.getInstance().findById(session, 1L);
-            assertEquals(game.getName(), "Mass Effect 3");
+            Game game = GameDaoImpl.getInstance().findById(session, 3L);
+            assertNotNull(game);
         }
     }
 
@@ -116,7 +119,7 @@ public class GameDaoImplTest {
         try (Session session = FACTORY.openSession()) {
             List<Game> allGames = GameDaoImpl.getInstance().findAll(session);
             List<String> gamesNames = allGames.stream().map(Game::getName).collect(toList());
-            assertThat(gamesNames, containsInAnyOrder("Diablo III", "Far Cry 3", "Mass Effect 3", "Mass Effect", "Syberia 3"));
+           assertThat(gamesNames, hasItems("Diablo III", "Far Cry 3", "Mass Effect 3", "Mass Effect", "Syberia 3"));
         }
     }
 

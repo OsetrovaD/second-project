@@ -53,7 +53,8 @@ public class GameDaoImpl extends BaseDaoImpl<Game, Long> implements GameDao {
         criteria.select(gameRoot)
                 .where(
                     gameFilters.toArray(new Predicate[]{})
-                );
+                )
+                .groupBy(gameRoot);
         return session.createQuery(criteria)
                 .setMaxResults(limitOffset.getLimit())
                 .setFirstResult(limitOffset.getOffset())

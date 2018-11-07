@@ -44,7 +44,7 @@ public class ItemInOrderTest {
             session.save(order);
 
             ItemInOrder itemInOrder = ItemInOrder.builder()
-                    .orderGamePrice(OrderGamePrice.of(gamePrice.getGameGamePlatform().getGameId(), order.getId()))
+                    .orderGamePrice(OrderGamePrice.of(gamePrice.getId(), order.getId()))
                     .number(2)
                     .build();
             Serializable savedItemId = session.save(itemInOrder);

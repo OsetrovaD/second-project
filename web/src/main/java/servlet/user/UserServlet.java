@@ -1,7 +1,5 @@
 package servlet.user;
 
-import project.entity.User;
-import service.UserService;
 import util.JspPathUtil;
 
 import javax.servlet.ServletException;
