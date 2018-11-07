@@ -1,8 +1,5 @@
 package servlet.game;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import project.connection.ApplicationSessionFactory;
 import project.entity.Game;
 import project.entity.enumonly.AgeLimit;
 import service.GameService;
@@ -20,16 +17,12 @@ import java.util.List;
 @WebServlet("/all-games")
 public class AllGamesServlet extends HttpServlet {
 
-    private static final SessionFactory FACTORY = ApplicationSessionFactory.getSessionFactory();
-
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        try (Session session = FACTORY.openSession()) {
-            List<Game> games = GameService.getInstance().findAll(session);
+            List<Game> games = GameService.getInstance().findAll();
             List<AgeLimit> ageLimits = Arrays.asList(AgeLimit.values());
             req.setAttribute("games", games);
             req.setAttribute("ageLimits", ageLimits);
             getServletContext().getRequestDispatcher(JspPathUtil.getPath("all-games")).forward(req, resp);
-        }
     }
 }

@@ -1,8 +1,5 @@
 package servlet.game;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import project.connection.ApplicationSessionFactory;
 import project.dto.GameFilterDto;
 import project.dto.LimitOffsetDto;
 import project.entity.Game;
@@ -22,7 +19,6 @@ import java.util.List;
 @WebServlet("/games-filter")
 public class GameFilterServlet extends HttpServlet {
 
-    private static final SessionFactory FACTORY = ApplicationSessionFactory.getSessionFactory();
     private static final String FILTERS = "filters";
     private static final String ITEMS_ON_PAGE = "items_on_page";
 
@@ -44,10 +40,8 @@ public class GameFilterServlet extends HttpServlet {
         }
 
         if (limit != null) {
-            try (Session session = FACTORY.openSession()) {
-                List<Game> allFilteredGames = GameService.getInstance().filterGames(session, filters, limitOffset);
+                List<Game> allFilteredGames = GameService.getInstance().filterGames(filters, limitOffset);
                 pagesNumber = (int) Math.ceil(allFilteredGames.size() / Double.valueOf((String) req.getSession().getAttribute(ITEMS_ON_PAGE)));
-            }
             String page = req.getParameter("page");
             if (page == null) {
                 limitOffset = LimitOffsetDto.of(limit, 0);
@@ -58,10 +52,7 @@ public class GameFilterServlet extends HttpServlet {
                 currentPage = Integer.valueOf(page);
             }
         }
-
-        try (Session session = FACTORY.openSession()) {
-            filteredGames = GameService.getInstance().filterGames(session, filters, limitOffset);
-        }
+        filteredGames = GameService.getInstance().filterGames(filters, limitOffset);
         req.setAttribute("filteredGames", filteredGames);
         req.setAttribute("pagesNumber", pagesNumber);
         req.setAttribute("currentPage", currentPage);
