@@ -65,7 +65,7 @@ public class OrderTest {
             session.save(order);
 
             ItemInOrder itemInOrder = ItemInOrder.builder()
-                    .orderGamePrice(OrderGamePrice.of(gamePrice.getGameGamePlatform().getGameId(), order.getId()))
+                    .orderGamePrice(OrderGamePrice.of(gamePrice.getId(), order.getId()))
                     .number(2)
                     .build();
             session.save(itemInOrder);

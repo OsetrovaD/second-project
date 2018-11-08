@@ -16,6 +16,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -60,7 +61,7 @@ public class Order extends BaseEntity<Long> {
     @Column(name = "delivery_date")
     private LocalDate deliveryDate;
 
-    @Column(name = "user_id")
+    @JoinColumn(name = "user_id")
     @ManyToOne
     private User user;
 
