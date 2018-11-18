@@ -1,11 +1,10 @@
 package com.osetrova.project.entity;
 
-import com.osetrova.project.configuration.DatabaseConfiguration;
-import com.osetrova.project.dao.entitydao.CommentDaoImpl;
-import com.osetrova.project.dao.entitydao.GameDaoImpl;
-import com.osetrova.project.dao.entitydao.UserDaoImpl;
+import com.osetrova.project.configuration.DatabaseSpringDataConfiguration;
 import com.osetrova.project.entity.enumonly.Role;
-import org.hibernate.SessionFactory;
+import com.osetrova.project.jparepository.CommentRepository;
+import com.osetrova.project.jparepository.UserRepository;
+import com.osetrova.project.jparepository.gamerepository.GameRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,37 +12,40 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.time.LocalDate;
+import java.util.Optional;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = DatabaseConfiguration.class)
+@ContextConfiguration(classes = DatabaseSpringDataConfiguration.class)
 @Transactional
 public class CommentTest {
 
     @Autowired
-    private CommentDaoImpl commentDao;
+    private CommentRepository commentRepository;
 
     @Autowired
-    private UserDaoImpl userDao;
+    private UserRepository userRepository;
 
     @Autowired
-    private GameDaoImpl gameDao;
+    private GameRepository gameRepository;
 
     @Autowired
-    private SessionFactory sessionFactory;
+    private EntityManager manager;
 
     @Test
     public void checkSaveAndGet() {
         User user = new Admin("admin_test", "password", "email@email.email", Role.ADMIN, 100);
-        userDao.save(user);
+        userRepository.save(user);
 
         Game game = Game.builder()
                 .name("new game")
                 .description("new game")
                 .build();
-        gameDao.save(game);
+        gameRepository.save(game);
 
         Comment comment = Comment.builder()
                 .text("comment")
@@ -51,12 +53,13 @@ public class CommentTest {
                 .game(game)
                 .user(user)
                 .build();
-        Long savedId = commentDao.save(comment);
-        assertNotNull(savedId);
-
-        sessionFactory.getCurrentSession().evict(comment);
-
-        Comment savedComment = commentDao.findById(savedId);
+        Comment savedComment = commentRepository.save(comment);
+        Long savedId = savedComment.getId();
         assertNotNull(savedComment);
+
+        manager.detach(comment);
+
+        Optional<Comment> commentOptional = commentRepository.findById(savedId);
+        assertTrue(commentOptional.isPresent());
     }
 }

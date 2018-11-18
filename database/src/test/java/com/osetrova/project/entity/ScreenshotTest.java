@@ -1,12 +1,9 @@
 package com.osetrova.project.entity;
 
-import com.osetrova.project.configuration.DatabaseConfiguration;
-import com.osetrova.project.connectionutil.ConnectionUtil;
-import com.osetrova.project.dao.entitydao.GameDaoImpl;
-import com.osetrova.project.dao.entitydao.ScreenshotDaoImpl;
+import com.osetrova.project.configuration.DatabaseSpringDataConfiguration;
 import com.osetrova.project.entity.embeddable.GameScreenshot;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import com.osetrova.project.jparepository.ScreenshotRepository;
+import com.osetrova.project.jparepository.gamerepository.GameRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,22 +11,25 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import java.util.Optional;
+
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = DatabaseConfiguration.class)
+@ContextConfiguration(classes = DatabaseSpringDataConfiguration.class)
 @Transactional
 public class ScreenshotTest {
 
     @Autowired
-    private GameDaoImpl gameDao;
+    private GameRepository gameRepository;
 
     @Autowired
-    private SessionFactory sessionFactory;
+    private EntityManager manager;
 
     @Autowired
-    private ScreenshotDaoImpl screenshotDao;
+    private ScreenshotRepository screenshotRepository;
 
     @Test
     public void checkSaveAndGet() {
@@ -37,20 +37,20 @@ public class ScreenshotTest {
                 .name("game_3")
                 .description("new game")
                 .build();
-        gameDao.save(game);
+        gameRepository.save(game);
 
         GameScreenshot gameScreenshot = GameScreenshot.of(game.getId(), "url_1");
 
         Screenshot screenshot = Screenshot.builder()
                 .gameScreenshot(gameScreenshot)
                 .build();
-        screenshotDao.save(screenshot);
-        sessionFactory.getCurrentSession().flush();
+        screenshotRepository.save(screenshot);
+        manager.flush();
 
-        sessionFactory.getCurrentSession().evict(screenshot);
+        manager.detach(screenshot);
 
-        Screenshot savedScreenshot = screenshotDao.findById(gameScreenshot);
-        assertNotNull(savedScreenshot);
+        Optional<Screenshot> optionalScreenshot = screenshotRepository.findById(gameScreenshot);
+        assertTrue(optionalScreenshot.isPresent());
     }
 
     @Test
@@ -59,18 +59,21 @@ public class ScreenshotTest {
                 .name("game_3")
                 .description("new game")
                 .build();
-        gameDao.save(game);
+        gameRepository.save(game);
 
         GameScreenshot gameScreenshot = GameScreenshot.of(game.getId(), "url_2");
 
         Screenshot screenshot = Screenshot.builder()
                 .gameScreenshot(gameScreenshot)
                 .build();
-        screenshotDao.save(screenshot);
-        sessionFactory.getCurrentSession().flush();
+        screenshotRepository.save(screenshot);
+        manager.flush();
 
-        sessionFactory.getCurrentSession().clear();
-        screenshot = screenshotDao.findById(gameScreenshot);
+        manager.clear();
+        Optional<Screenshot> optionalScreenshot = screenshotRepository.findById(gameScreenshot);
+        if (optionalScreenshot.isPresent()) {
+            screenshot = optionalScreenshot.get();
+        }
         assertEquals(game, screenshot.getGame());
     }
 }

@@ -1,13 +1,10 @@
 package com.osetrova.project.entity;
 
-import com.osetrova.project.configuration.DatabaseConfiguration;
-import com.osetrova.project.connectionutil.ConnectionUtil;
-import com.osetrova.project.dao.entitydao.CommentDaoImpl;
-import com.osetrova.project.dao.entitydao.GameDaoImpl;
-import com.osetrova.project.dao.entitydao.UserDaoImpl;
+import com.osetrova.project.configuration.DatabaseSpringDataConfiguration;
 import com.osetrova.project.entity.enumonly.Role;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import com.osetrova.project.jparepository.CommentRepository;
+import com.osetrova.project.jparepository.UserRepository;
+import com.osetrova.project.jparepository.gamerepository.GameRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,65 +12,70 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.Serializable;
+import javax.persistence.EntityManager;
 import java.time.LocalDate;
+import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = DatabaseConfiguration.class)
+@ContextConfiguration(classes = DatabaseSpringDataConfiguration.class)
 @Transactional
 public class UserTest {
 
     @Autowired
-    private CommentDaoImpl commentDao;
+    private CommentRepository commentRepository;
 
     @Autowired
-    private UserDaoImpl userDao;
+    private UserRepository userRepository;
 
     @Autowired
-    private GameDaoImpl gameDao;
+    private GameRepository gameRepository;
 
     @Autowired
-    private SessionFactory sessionFactory;
+    private EntityManager manager;
 
     @Test
     public void checkSaveAndGetAdmin() {
         User admin = new Admin("adminLogin", "password", "mail_email@email.email", Role.ADMIN, 100);
-        Long savedUserId = userDao.save(admin);
-        assertNotNull(savedUserId);
+        User savedUser = userRepository.save(admin);
+        assertNotNull(savedUser);
+        Long savedUserId = savedUser.getId();
 
-        sessionFactory.getCurrentSession().evict(admin);
+        manager.detach(admin);
 
-        User savedAdmin = userDao.findById(savedUserId);
-        assertNotNull(savedAdmin);
+        Optional<User> userOptional = userRepository.findById(savedUserId);
+        assertTrue(userOptional.isPresent());
     }
 
     @Test
     public void checkSaveAndGetSimpleUser() {
         User simpleUser = new SimpleUser("simpleUser", "password", "some_email@email.email",
                 Role.USER, LocalDate.of(2018, 4, 7));
-        Long savedUserId = userDao.save(simpleUser);
-        assertNotNull(savedUserId);
+        User savedUser = userRepository.save(simpleUser);
+        assertNotNull(savedUser);
+        Long savedUserId = savedUser.getId();
 
-        sessionFactory.getCurrentSession().evict(simpleUser);
+        manager.detach(simpleUser);
 
-        User savedSimpleUser = userDao.findById(savedUserId);
-        assertNotNull(savedSimpleUser);
+        Optional<User> optionalUser = userRepository.findById(savedUserId);
+        assertTrue(optionalUser.isPresent());
     }
 
     @Test
     public void checkGetComments() {
         User user = new Admin("someLogin", "password", "mail@email.email", Role.ADMIN, 100);
-        Long userId = userDao.save(user);
+        User savedUser = userRepository.save(user);
+        Long userId = savedUser.getId();
 
         Game game = Game.builder()
                 .name("game_5")
                 .description("new game")
                 .build();
-        gameDao.save(game);
+        gameRepository.save(game);
 
         Comment comment = Comment.builder()
                 .text("comment")
@@ -81,10 +83,13 @@ public class UserTest {
                 .game(game)
                 .user(user)
                 .build();
-        commentDao.save(comment);
+        commentRepository.save(comment);
 
-        sessionFactory.getCurrentSession().clear();
-        user = userDao.findById(userId);
+        manager.clear();
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isPresent()) {
+            user = optionalUser.get();
+        }
         assertThat(user.getComments(), hasSize(1));
     }
 }

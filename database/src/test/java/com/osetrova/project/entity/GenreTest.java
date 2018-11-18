@@ -1,9 +1,8 @@
 package com.osetrova.project.entity;
 
-import com.osetrova.project.configuration.DatabaseConfiguration;
-import com.osetrova.project.dao.entitydao.GenreDaoImpl;
-import com.osetrova.project.dao.entitydao.SubgenreDaoImpl;
-import org.hibernate.SessionFactory;
+import com.osetrova.project.configuration.DatabaseSpringDataConfiguration;
+import com.osetrova.project.jparepository.GenreRepository;
+import com.osetrova.project.jparepository.SubgenreRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,36 +10,42 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+
+import java.util.Optional;
+
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = DatabaseConfiguration.class)
+@ContextConfiguration(classes = DatabaseSpringDataConfiguration.class)
 @Transactional
 public class GenreTest {
 
     @Autowired
-    private GenreDaoImpl genreDao;
+    private GenreRepository genreRepository;
 
     @Autowired
-    private SubgenreDaoImpl subgenreDao;
+    private SubgenreRepository subgenreRepository;
 
     @Autowired
-    private SessionFactory sessionFactory;
+    private EntityManager manager;
 
     @Test
     public void checkSaveAndGet() {
         Genre genre = Genre.builder()
                 .name("genre")
                 .build();
-        Integer savedGenreId = genreDao.save(genre);
-        assertNotNull(savedGenreId);
-
-        sessionFactory.getCurrentSession().evict(genre);
-
-        Genre savedGenre = genreDao.findById(savedGenreId);
+        Genre savedGenre = genreRepository.save(genre);
         assertNotNull(savedGenre);
+        Integer savedGenreId = savedGenre.getId();
+
+        manager.detach(genre);
+
+        Optional<Genre> genreOptional = genreRepository.findById(savedGenreId);
+        assertTrue(genreOptional.isPresent());
     }
 
     @Test
@@ -48,15 +53,15 @@ public class GenreTest {
         Genre genre = Genre.builder()
                 .name("new genre")
                 .build();
-        genreDao.save(genre);
+        genreRepository.save(genre);
 
         Subgenre subgenre = Subgenre.builder()
                 .name("subgenre")
                 .genre(genre)
                 .build();
-        subgenreDao.save(subgenre);
+        subgenreRepository.save(subgenre);
 
-        sessionFactory.getCurrentSession().refresh(genre);
+        manager.refresh(genre);
         assertThat(genre.getSubgenres(), hasSize(1));
     }
 }

@@ -1,12 +1,11 @@
 package com.osetrova.project.entity;
 
-import com.osetrova.project.configuration.DatabaseConfiguration;
-import com.osetrova.project.dao.entitydao.GameDaoImpl;
-import com.osetrova.project.dao.entitydao.GamePriceDaoImpl;
-import com.osetrova.project.dao.entitydao.StorageDaoImpl;
+import com.osetrova.project.configuration.DatabaseSpringDataConfiguration;
 import com.osetrova.project.entity.embeddable.GameGamePlatform;
 import com.osetrova.project.entity.enumonly.GamePlatform;
-import org.hibernate.SessionFactory;
+import com.osetrova.project.jparepository.GamePriceRepository;
+import com.osetrova.project.jparepository.StorageRepository;
+import com.osetrova.project.jparepository.gamerepository.GameRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,26 +13,29 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.time.LocalDate;
+import java.util.Optional;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = DatabaseConfiguration.class)
+@ContextConfiguration(classes = DatabaseSpringDataConfiguration.class)
 @Transactional
 public class StorageTest {
 
     @Autowired
-    private SessionFactory sessionFactory;
+    private EntityManager manager;
 
     @Autowired
-    private GameDaoImpl gameDao;
+    private GameRepository gameRepository;
 
     @Autowired
-    private GamePriceDaoImpl gamePriceDao;
+    private GamePriceRepository gamePriceRepository;
 
     @Autowired
-    private StorageDaoImpl storageDao;
+    private StorageRepository storageRepository;
 
     @Test
     public void checkSaveAndGet() {
@@ -41,25 +43,26 @@ public class StorageTest {
                 .name("game_4")
                 .description("new game")
                 .build();
-        gameDao.save(game);
+        gameRepository.save(game);
 
         GamePrice gamePrice = GamePrice.builder()
                 .gameGamePlatform(GameGamePlatform.of(game.getId(), GamePlatform.PC))
                 .price(20)
                 .build();
-        gamePriceDao.save(gamePrice);
+        gamePriceRepository.save(gamePrice);
 
         Storage storage = Storage.builder()
                 .gamePrice(gamePrice)
                 .number((short) 2)
                 .lastAdditionDate(LocalDate.of(2018, 7, 18))
                 .build();
-        Long savedStorageId = storageDao.save(storage);
-        assertNotNull(savedStorageId);
-
-        sessionFactory.getCurrentSession().evict(storage);
-
-        Storage savedStorage = storageDao.findById(savedStorageId);
+        Storage savedStorage = storageRepository.save(storage);
         assertNotNull(savedStorage);
+        Long savedStorageId = savedStorage.getId();
+
+        manager.detach(storage);
+
+        Optional<Storage> optionalStorage = storageRepository.findById(savedStorageId);
+        assertTrue(optionalStorage.isPresent());
     }
 }

@@ -1,11 +1,10 @@
 package com.osetrova.project.entity;
 
-import com.osetrova.project.configuration.DatabaseConfiguration;
-import com.osetrova.project.dao.entitydao.GameDaoImpl;
-import com.osetrova.project.dao.entitydao.GamePriceDaoImpl;
+import com.osetrova.project.configuration.DatabaseSpringDataConfiguration;
 import com.osetrova.project.entity.embeddable.GameGamePlatform;
 import com.osetrova.project.entity.enumonly.GamePlatform;
-import org.hibernate.SessionFactory;
+import com.osetrova.project.jparepository.GamePriceRepository;
+import com.osetrova.project.jparepository.gamerepository.GameRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,21 +12,25 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import java.util.Optional;
+
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = DatabaseConfiguration.class)
+@ContextConfiguration(classes = DatabaseSpringDataConfiguration.class)
 @Transactional
 public class GamePriceTest {
 
     @Autowired
-    private GameDaoImpl gameDao;
+    private GameRepository gameRepository;
 
     @Autowired
-    private GamePriceDaoImpl gamePriceDao;
+    private GamePriceRepository gamePriceRepository;
 
     @Autowired
-    private SessionFactory sessionFactory;
+    private EntityManager manager;
 
     @Test
     public void checkSaveAdnGet() {
@@ -35,18 +38,19 @@ public class GamePriceTest {
                 .name("test game")
                 .description("new game")
                 .build();
-        gameDao.save(game);
+        gameRepository.save(game);
 
         GamePrice gamePrice = GamePrice.builder()
                 .gameGamePlatform(GameGamePlatform.of(game.getId(), GamePlatform.PC))
                 .price(20)
                 .build();
-        Long savedGamePriceId = gamePriceDao.save(gamePrice);
-        assertNotNull(savedGamePriceId);
-
-        sessionFactory.getCurrentSession().evict(gamePrice);
-
-        GamePrice savedGamePrice = gamePriceDao.findById(savedGamePriceId);
+        GamePrice savedGamePrice = gamePriceRepository.save(gamePrice);
         assertNotNull(savedGamePrice);
+        Long savedGamePriceId = savedGamePrice.getId();
+
+        manager.detach(gamePrice);
+
+        Optional<GamePrice> optionalGamePrice = gamePriceRepository.findById(savedGamePriceId);
+        assertTrue(optionalGamePrice.isPresent());
     }
 }

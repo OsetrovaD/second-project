@@ -1,17 +1,16 @@
 package com.osetrova.project.entity;
 
-import com.osetrova.project.configuration.DatabaseConfiguration;
-import com.osetrova.project.dao.entitydao.GameDaoImpl;
-import com.osetrova.project.dao.entitydao.GamePriceDaoImpl;
-import com.osetrova.project.dao.entitydao.ItemInOrderDaoImpl;
-import com.osetrova.project.dao.entitydao.OrderDaoImpl;
+import com.osetrova.project.configuration.DatabaseSpringDataConfiguration;
 import com.osetrova.project.entity.embeddable.GameGamePlatform;
 import com.osetrova.project.entity.embeddable.OrderGamePrice;
 import com.osetrova.project.entity.enumonly.Condition;
 import com.osetrova.project.entity.enumonly.DeliveryMethod;
 import com.osetrova.project.entity.enumonly.GamePlatform;
 import com.osetrova.project.entity.enumonly.PaymentForm;
-import org.hibernate.SessionFactory;
+import com.osetrova.project.jparepository.GamePriceRepository;
+import com.osetrova.project.jparepository.ItemInOrderRepository;
+import com.osetrova.project.jparepository.OrderRepository;
+import com.osetrova.project.jparepository.gamerepository.GameRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,29 +18,32 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.time.LocalDate;
+import java.util.Optional;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = DatabaseConfiguration.class)
+@ContextConfiguration(classes = DatabaseSpringDataConfiguration.class)
 @Transactional
 public class ItemInOrderTest {
 
     @Autowired
-    private SessionFactory sessionFactory;
+    private EntityManager manager;
 
     @Autowired
-    private GameDaoImpl gameDao;
+    private GameRepository gameRepository;
 
     @Autowired
-    private GamePriceDaoImpl gamePriceDao;
+    private GamePriceRepository gamePriceRepository;
 
     @Autowired
-    private OrderDaoImpl orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
-    private ItemInOrderDaoImpl itemInOrderDao;
+    private ItemInOrderRepository itemInOrderRepository;
 
     @Test
     public void checkSaveAndGet() {
@@ -49,13 +51,13 @@ public class ItemInOrderTest {
                 .name("game test name")
                 .description("new game")
                 .build();
-        gameDao.save(game);
+        gameRepository.save(game);
 
         GamePrice gamePrice = GamePrice.builder()
                 .gameGamePlatform(GameGamePlatform.of(game.getId(), GamePlatform.PC))
                 .price(20)
                 .build();
-        gamePriceDao.save(gamePrice);
+        gamePriceRepository.save(gamePrice);
 
         Order order = Order.builder()
                 .paymentForm(PaymentForm.CASH)
@@ -63,18 +65,19 @@ public class ItemInOrderTest {
                 .condition(Condition.ACCEPTED)
                 .date(LocalDate.of(2018, 9, 29))
                 .build();
-        orderDao.save(order);
+        orderRepository.save(order);
 
         ItemInOrder itemInOrder = ItemInOrder.builder()
                 .orderGamePrice(OrderGamePrice.of(gamePrice.getId(), order.getId()))
                 .number(2)
                 .build();
-        Long savedItemId = itemInOrderDao.save(itemInOrder);
-        assertNotNull(savedItemId);
-
-        sessionFactory.getCurrentSession().evict(itemInOrder);
-
-        ItemInOrder savedItem = itemInOrderDao.findById(savedItemId);
+        ItemInOrder savedItem = itemInOrderRepository.save(itemInOrder);
         assertNotNull(savedItem);
+        Long savedItemId = savedItem.getId();
+
+        manager.detach(itemInOrder);
+
+        Optional<ItemInOrder> optionalItem = itemInOrderRepository.findById(savedItemId);
+        assertTrue(optionalItem.isPresent());
     }
 }

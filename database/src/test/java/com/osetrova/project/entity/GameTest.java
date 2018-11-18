@@ -1,18 +1,17 @@
 package com.osetrova.project.entity;
 
-import com.osetrova.project.configuration.DatabaseConfiguration;
-import com.osetrova.project.dao.entitydao.CommentDaoImpl;
-import com.osetrova.project.dao.entitydao.DeveloperCompanyDaoImpl;
-import com.osetrova.project.dao.entitydao.GameDaoImpl;
-import com.osetrova.project.dao.entitydao.GamePriceDaoImpl;
-import com.osetrova.project.dao.entitydao.ScreenshotDaoImpl;
-import com.osetrova.project.dao.entitydao.UserDaoImpl;
+import com.osetrova.project.configuration.DatabaseSpringDataConfiguration;
 import com.osetrova.project.entity.embeddable.GameGamePlatform;
 import com.osetrova.project.entity.embeddable.GameScreenshot;
 import com.osetrova.project.entity.enumonly.AgeLimit;
 import com.osetrova.project.entity.enumonly.GamePlatform;
 import com.osetrova.project.entity.enumonly.Role;
-import org.hibernate.SessionFactory;
+import com.osetrova.project.jparepository.CommentRepository;
+import com.osetrova.project.jparepository.DeveloperCompanyRepository;
+import com.osetrova.project.jparepository.GamePriceRepository;
+import com.osetrova.project.jparepository.ScreenshotRepository;
+import com.osetrova.project.jparepository.UserRepository;
+import com.osetrova.project.jparepository.gamerepository.GameRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,44 +19,47 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.time.LocalDate;
+import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = DatabaseConfiguration.class)
+@ContextConfiguration(classes = DatabaseSpringDataConfiguration.class)
 @Transactional
 public class GameTest {
 
     @Autowired
-    private DeveloperCompanyDaoImpl developerCompanyDao;
+    private DeveloperCompanyRepository developerCompanyRepository;
 
     @Autowired
-    private GameDaoImpl gameDao;
+    private GameRepository gameRepository;
 
     @Autowired
-    private SessionFactory sessionFactory;
+    private EntityManager manager;
 
     @Autowired
-    private ScreenshotDaoImpl screenshotDao;
+    private ScreenshotRepository screenshotRepository;
 
     @Autowired
-    private UserDaoImpl userDao;
+    private UserRepository userRepository;
 
     @Autowired
-    private CommentDaoImpl commentDao;
+    private CommentRepository commentRepository;
 
     @Autowired
-    private GamePriceDaoImpl gamePriceDao;
+    private GamePriceRepository gamePriceRepository;
 
     @Test
     public void checkSaveAndGet() {
         DeveloperCompany developerCompany = DeveloperCompany.builder()
                 .name("developer company name")
                 .build();
-        developerCompanyDao.save(developerCompany);
+        developerCompanyRepository.save(developerCompany);
 
         Game game = Game.builder()
                 .name("some new game")
@@ -65,13 +67,14 @@ public class GameTest {
                 .developerCompany(developerCompany)
                 .ageLimit(AgeLimit.EVERYONE)
                 .build();
-        Long savedGameId = gameDao.save(game);
-        assertNotNull(savedGameId);
-
-        sessionFactory.getCurrentSession().evict(game);
-
-        Game savedGame = gameDao.findById(savedGameId);
+        Game savedGame = gameRepository.save(game);
         assertNotNull(savedGame);
+        Long savedGameId = savedGame.getId();
+
+        manager.detach(game);
+
+        Optional<Game> optionalGame = gameRepository.findById(savedGameId);
+        assertTrue(optionalGame.isPresent());
     }
 
     @Test
@@ -80,15 +83,15 @@ public class GameTest {
                 .name("some game")
                 .description("new game")
                 .build();
-        gameDao.save(game);
+        gameRepository.save(game);
 
         Screenshot screenshot = Screenshot.builder()
                 .gameScreenshot(GameScreenshot.of(game.getId(), "url"))
                 .build();
-        screenshotDao.save(screenshot);
-        sessionFactory.getCurrentSession().flush();
+        screenshotRepository.save(screenshot);
+        manager.flush();
 
-        sessionFactory.getCurrentSession().refresh(game);
+        manager.refresh(game);
 
         assertThat(game.getScreenshots(), hasSize(1));
     }
@@ -99,10 +102,10 @@ public class GameTest {
                 .name("game game")
                 .description("new game")
                 .build();
-        gameDao.save(game);
+        gameRepository.save(game);
 
         User user = new Admin("new_admin", "password", "email_email@email.email", Role.ADMIN, 100);
-        userDao.save(user);
+        userRepository.save(user);
 
         Comment comment = Comment.builder()
                 .text("comment")
@@ -110,9 +113,9 @@ public class GameTest {
                 .game(game)
                 .user(user)
                 .build();
-        commentDao.save(comment);
+        commentRepository.save(comment);
 
-        sessionFactory.getCurrentSession().refresh(game);
+        manager.refresh(game);
         assertThat(game.getComments(), hasSize(1));
     }
 
@@ -122,15 +125,15 @@ public class GameTest {
                 .name("some test")
                 .description("new game")
                 .build();
-        gameDao.save(game);
+        gameRepository.save(game);
 
         GamePrice gamePrice = GamePrice.builder()
                 .gameGamePlatform(GameGamePlatform.of(game.getId(), GamePlatform.PC))
                 .price(20)
                 .build();
-        gamePriceDao.save(gamePrice);
+        gamePriceRepository.save(gamePrice);
 
-        sessionFactory.getCurrentSession().refresh(game);
+        manager.refresh(game);
         assertThat(game.getGamePrices(), hasSize(1));
     }
 }

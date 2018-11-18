@@ -1,26 +1,27 @@
 package com.osetrova.project.configuration;
 
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.io.Resource;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.orm.hibernate5.HibernateTransactionManager;
-import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.util.Properties;
 
 @Configuration
-@ComponentScan("com.osetrova.project")
-@PropertySource("classpath:application.properties")
+@PropertySource({"classpath:database.properties", "classpath:hibernate.properties"})
 @EnableTransactionManagement
-public class DatabaseConfiguration {
+@EnableJpaRepositories(basePackages = "com.osetrova.project.jparepository")
+public class DatabaseSpringDataConfiguration {
 
     @Bean
     public DataSource dataSource(@Value("${db.username}") String username,
@@ -37,18 +38,20 @@ public class DatabaseConfiguration {
     }
 
     @Bean
-    public LocalSessionFactoryBean sessionFactory(DataSource dataSource, Properties hibernateProperties) {
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource, Properties hibernateProperties) {
+        HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
 
-        LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
-        sessionFactory.setDataSource(dataSource);
+        LocalContainerEntityManagerFactoryBean sessionFactory = new LocalContainerEntityManagerFactoryBean();
+        sessionFactory.setJpaVendorAdapter(vendorAdapter);
         sessionFactory.setPackagesToScan("com.osetrova.project.entity");
-        sessionFactory.setHibernateProperties(hibernateProperties);
+        sessionFactory.setDataSource(dataSource);
+        sessionFactory.setJpaProperties(hibernateProperties);
 
         return sessionFactory;
     }
 
     @Bean
-    public Properties hibernateProperties(@Value("classpath:application.properties") Resource resource) throws IOException {
+    public Properties hibernateProperties(@Value("classpath:hibernate.properties") Resource resource) throws IOException {
         Properties properties = new Properties();
         properties.load(resource.getInputStream());
 
@@ -56,7 +59,10 @@ public class DatabaseConfiguration {
     }
 
     @Bean
-    public HibernateTransactionManager transactionManager(SessionFactory sessionFactory) {
-        return new HibernateTransactionManager(sessionFactory);
+    public JpaTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
+        JpaTransactionManager transactionManager = new JpaTransactionManager();
+        transactionManager.setEntityManagerFactory(entityManagerFactory);
+
+        return transactionManager;
     }
 }
