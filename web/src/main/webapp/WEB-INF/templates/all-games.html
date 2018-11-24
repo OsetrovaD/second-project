@@ -1,12 +1,13 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<html>
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
+    <meta charset="UTF-8">
     <title>Список игр</title>
 </head>
 <body>
-<form id="form" action="${pageContext.request.contextPath}/games-filter" method="post">
+<div th:insert="~{header}"></div>
+<form style="padding-top: 50px" id="form" th:action="@{/games-filter}" th:method="post">
     <table>
         <caption><b>Фильтры</b></caption>
         <col width="200"><col width="300"><col width="300">
@@ -18,9 +19,10 @@
             <td>
                 <input type="checkbox" name="filters" value="age_limit"><b>Возрастное ограничение</b>
                 <select name="age_limit">
-                        <c:forEach var="ageLimit" items="${requestScope.ageLimits}">
-                            <option value="ageLimit">${ageLimit.name}</option>
-                        </c:forEach>
+                    <option th:each="ageLimit: ${ageLimits}"
+                            th:value="${ageLimit}"
+                            th:text="${ageLimit.name}">age limit
+                    </option>
                 </select>
             </td>
             <td>
@@ -35,7 +37,9 @@
     </label><br>
     <input type="submit" value="Применить">
 </form>
-
+<div sec:authorize="hasAnyAuthority('ADMIN')">
+    <span>Hello</span>
+</div>
 <table width="1200" border="1">
     <col width="200"><col width="950"><col width="50">
     <tr>
@@ -44,16 +48,12 @@
         <th align="left">Год выпуска</th>
         <th align="left">Возрастное ограничение</th>
     </tr>
-    <c:if test="${not empty requestScope.games}">
-        <c:forEach var="game" items="${requestScope.games}">
-            <tr>
-                <td>${game.name}</td>
-                <td>${game.description}</td>
-                <td>${game.issueYear}</td>
-                <td>${game.ageLimit.name}</td>
-            </tr>
-        </c:forEach>
-    </c:if>
+    <tr th:each="game: ${games}">
+        <td><a th:href="@{/game-info(id=${game.id})}" th:text="${game.name}">game name</a></td>
+        <td th:text="${game.description}">game description</td>
+        <td th:text="${game.issueYear}">game issue year</td>
+        <td th:text="${game.ageLimit.name}">game age limit</td>
+    </tr>
 </table>
 </body>
 </html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Список игр</title>
+</head>
+<body>
+    <table width="1200" border="1">
+        <col width="200"><col width="950"><col width="50">
+        <tr>
+            <th align="left">Название</th>
+            <th align="left">Описание</th>
+            <th align="left">Год выпуска</th>
+            <th align="left">Возрастное ограничение</th>
+        </tr>
+        <tr th:if="${filteredGames} ne empty" th:each="game: ${filteredGames}">
+            <td><a th:href="@{/game-info(id=${game.id})}" th:text="${game.name}">game name</a></td>
+            <td th:text="${game.description}">game description</td>
+            <td th:text="${game.issueYear}">game issue year</td>
+            <td th:text="${game.ageLimit.name}">game age limit</td>
+        </tr>
+    </table>
+    <table cellspacing="7" th:class="pagination" th:if="${pages.size()}" >
+        <tr>
+            <td th:each="page: ${pages}">
+                <span th:if="${page} == ${currentPage}" th:text="${page}">current page</span>
+                <a th:if="${page} != ${currentPage}" th:href="@{/games-filter(page=${page})}" th:text="${page}">page number</a>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

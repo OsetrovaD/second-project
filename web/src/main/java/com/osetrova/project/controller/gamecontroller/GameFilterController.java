@@ -1,38 +1,46 @@
-package com.osetrova.project.servlet.game;
+package com.osetrova.project.controller.gamecontroller;
 
-import com.osetrova.project.connection.ContextUtil;
 import com.osetrova.project.dto.GameFilterDto;
 import com.osetrova.project.dto.LimitOffsetDto;
 import com.osetrova.project.entity.Game;
 import com.osetrova.project.entity.enumonly.AgeLimit;
 import com.osetrova.project.service.GameService;
-import com.osetrova.project.util.JspPathUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
-@WebServlet("/games-filter")
-public class GameFilterServlet extends HttpServlet {
+@Controller
+@SessionAttributes({"filters", "items_on_page"})
+public class GameFilterController {
 
-    private static final String FILTERS = "filters";
     private static final String ITEMS_ON_PAGE = "items_on_page";
-    private static final GameService GAME_SERVICE = ContextUtil.getBean("gameService", GameService.class);
+    private static final String FILTERS = "filters";
     private static final String PAGE = "page";
     private static final String PRICE = "price";
     private static final String ISSUE_YEAR = "issue_year";
     private static final String AGE_LIMIT = "age_limit";
     private static final String FILTERED_GAMES = "filteredGames";
-    private static final String PAGES_NUMBER = "pagesNumber";
+    private static final String PAGES = "pages";
     private static final String CURRENT_PAGE = "currentPage";
 
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    private final GameService gameService;
+
+    @Autowired
+    public GameFilterController(GameService gameService) {
+        this.gameService = gameService;
+    }
+
+    @GetMapping("/games-filter")
+    public String getFilteredGames(Model model, HttpServletRequest req) {
         GameFilterDto filters = GameFilterDto.builder().build();
         LimitOffsetDto limitOffset = LimitOffsetDto.of(0, 0);
         List<Game> filteredGames;
@@ -49,8 +57,8 @@ public class GameFilterServlet extends HttpServlet {
         }
 
         if (limit != null) {
-                List<Game> allFilteredGames = GAME_SERVICE.filterGames(filters, limitOffset);
-                pagesNumber = (int) Math.ceil(allFilteredGames.size() / Double.valueOf((String) req.getSession().getAttribute(ITEMS_ON_PAGE)));
+            List<Game> allFilteredGames = gameService.filterGames(filters, limitOffset);
+            pagesNumber = (int) Math.ceil(allFilteredGames.size() / Double.valueOf((String) req.getSession().getAttribute(ITEMS_ON_PAGE)));
             String page = req.getParameter(PAGE);
             if (page == null) {
                 limitOffset = LimitOffsetDto.of(limit, 0);
@@ -61,15 +69,17 @@ public class GameFilterServlet extends HttpServlet {
                 currentPage = Integer.valueOf(page);
             }
         }
-        filteredGames = GAME_SERVICE.filterGames(filters, limitOffset);
-        req.setAttribute(FILTERED_GAMES, filteredGames);
-        req.setAttribute(PAGES_NUMBER, pagesNumber);
-        req.setAttribute(CURRENT_PAGE, currentPage);
-        getServletContext().getRequestDispatcher(JspPathUtil.getPath("games-filter")).forward(req, resp);
+        List<Integer> pages = IntStream.rangeClosed(1, pagesNumber).boxed().collect(Collectors.toList());
+        filteredGames = gameService.filterGames(filters, limitOffset);
+        model.addAttribute(FILTERED_GAMES, filteredGames);
+        model.addAttribute(PAGES, pages);
+        model.addAttribute(CURRENT_PAGE, currentPage);
+
+        return "games-filter";
     }
 
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    @PostMapping("/games-filter")
+    public String getFilterParameters(Model model, HttpServletRequest req) {
         GameFilterDto filters = GameFilterDto.builder().build();
 
         if (req.getParameterValues(FILTERS) != null) {
@@ -85,12 +95,13 @@ public class GameFilterServlet extends HttpServlet {
                     .filter(AGE_LIMIT::equals)
                     .findFirst()
                     .ifPresent(x -> filters.setAgeLimit(AgeLimit.valueOf(x)));
-            req.getSession().setAttribute(FILTERS, filters);
+            model.addAttribute(FILTERS, filters);
         }
 
         if (!"".equals(req.getParameter(ITEMS_ON_PAGE))) {
-            req.getSession().setAttribute(ITEMS_ON_PAGE, req.getParameter(ITEMS_ON_PAGE));
+            model.addAttribute(ITEMS_ON_PAGE, req.getParameter(ITEMS_ON_PAGE));
         }
-        resp.sendRedirect("/games-filter");
+
+        return "redirect:/games-filter";
     }
 }

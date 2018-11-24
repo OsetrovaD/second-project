@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Интернет-магазин компьютерных игр</title>
+    <style type="text/css">
+        h1 {
+            background-color: #f4f4f4;
+            border: 1px solid #333333;
+            color: #333333;
+            text-align: center;
+            margin: 0;
+            padding: 5px;
+        }
+        .button {
+            border: 1px solid #333333;
+            text-decoration: none;
+            width: 7em;
+            padding:7px;
+            background-color: #C9EBDC;
+            color: #333333;
+        }
+    </style>
+</head>
+<body>
+    <div th:insert="~{header}"></div>
+    <br>
+    <p style="padding-top: 20px"></p>
+    <h1 th:text="#{hellopage.greeting}">Greeting</h1>
+    <h2 align="center" th:text="#{hellopage.menu}">Menu</h2>
+    <p align="center"><a th:href="@{/login}" class="button" th:text="#{hellopage.enter}">Enter</a> <a th:href="@{/register-page}" class="button" th:text="#{hellopage.register}">Register</a></p>
+</body>
+</html>
