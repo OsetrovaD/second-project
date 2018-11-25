@@ -35,6 +35,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .logout()
                 .logoutSuccessUrl("/")
             .and()
+                .exceptionHandling().accessDeniedPage("/access-denied")
+            .and()
                 .userDetailsService(userDetailsService);
     }
 }
