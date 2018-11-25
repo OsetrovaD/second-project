@@ -1,13 +1,12 @@
 package com.osetrova.project.controller;
 
-import com.osetrova.project.util.InterestingFactsUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.Random;
 
-import static com.osetrova.project.util.InterestingFactsUtil.*;
+import static com.osetrova.project.util.InterestingFactsUtil.FACTS;
 
 @Controller
 public class HomePageController {

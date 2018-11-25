@@ -3,6 +3,7 @@ package com.osetrova.project.controller.gamecontroller;
 import com.osetrova.project.entity.Game;
 import com.osetrova.project.entity.Genre;
 import com.osetrova.project.entity.enumonly.AgeLimit;
+import com.osetrova.project.requestdto.GamesFilterRequestDto;
 import com.osetrova.project.service.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -31,6 +32,7 @@ public class GameController {
         AgeLimit[] ageLimits = AgeLimit.values();
         model.addAttribute("games", games);
         model.addAttribute("ageLimits", ageLimits);
+        model.addAttribute("filters", new GamesFilterRequestDto());
 
         return "all-games";
     }

@@ -1,24 +1,23 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Список игр</title>
 </head>
 <body>
 <div th:insert="~{header}"></div>
-<form style="padding-top: 50px" id="form" th:action="@{/games-filter}" th:method="post">
+<form style="padding-top: 50px" id="form" th:action="@{/games-filter}" th:method="post" th:object="${filters}">
     <table>
         <caption><b>Фильтры</b></caption>
         <col width="200"><col width="300"><col width="300">
         <tr>
             <td>
-                <input type="checkbox" name="filters" value="price"><b>Цена(ниже чем)</b>
-                <input type="text" name="price">
+                <input type="checkbox" th:field="*{PriceFilterChosen}"><b>Цена(ниже чем)</b>
+                <input type="text" pattern="\d" th:field="*{price}">
             </td>
             <td>
-                <input type="checkbox" name="filters" value="age_limit"><b>Возрастное ограничение</b>
-                <select name="age_limit">
+                <input type="checkbox" th:field="*{AgeLimitFilterChosen}"><b>Возрастное ограничение</b>
+                <select th:field="*{ageLimit}">
                     <option th:each="ageLimit: ${ageLimits}"
                             th:value="${ageLimit}"
                             th:text="${ageLimit.name}">age limit
@@ -26,20 +25,17 @@
                 </select>
             </td>
             <td>
-                <input type="checkbox" name="filters" value="issue_year"><b>Год выпуска(начиная от)</b>
-                <input type="text" name="issue_year">
+                <input type="checkbox" th:field="*{IssueYearFilterChosen}"><b>Год выпуска(начиная от)</b>
+                <input type="text" pattern="\d{4}" th:field="*{issueYear}">
             </td>
         </tr>
     </table>
     <br>
     <label>Показывать на странице по
-        <input type="text" name="items_on_page" size="2">
+        <input type="text" size="2" pattern="\d" th:field="*{itemsOnPage}">
     </label><br>
     <input type="submit" value="Применить">
 </form>
-<div sec:authorize="hasAnyAuthority('ADMIN')">
-    <span>Hello</span>
-</div>
 <table width="1200" border="1">
     <col width="200"><col width="950"><col width="50">
     <tr>
