@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Дом, милый дом</title>
+    <style type="text/css">
+        .facts {
+            border: 1px solid #333333;
+            background-color: #f4f4f4;
+            color: #333333;
+            width: 700px;
+            margin-right: 27%;
+            margin-left: 27%;
+            padding: 0;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div th:insert="~{header}"></div>
+    <br>
+    <p style="padding-top: 20px"><span th:text="#{userpage.greeting}">Hello</span>, <span sec:authentication="name">Username</span></p>
+    <p><a th:href="@{/change-data}">Изменить все данные</a></p>
+        <p sec:authorize="hasAnyAuthority('ADMIN')">
+            <a th:href="@{/add-game}">Добавить игру</a> |
+            <a th:href="@{/all-users}">Список всех пользователей</a> |
+            <a th:href="@{/choose-date-period}">Поиск заказа по дате</a> |
+            <a th:href="@{/add-to-storage}">Изменить количество товара на складе</a>
+        </p>
+    <br>
+    <p><a th:href="@{/download}">Скачать прайс-лист</a></p>
+    <div class="facts">
+        <h3>Интересный факт: </h3>
+        <p th:text="${interestingFact}">Interesting fact</p>
+    </div>
+</body>
+</html>

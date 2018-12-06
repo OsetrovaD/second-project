@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Информация об игре</title>
+    <style type="text/css">
+        img {
+            float: left;
+            margin: 0 15px 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <p style="padding-top: 20px">
+        <img th:src="@{${game.image}}" vspace="15" hspace="25" width="250"/>
+        <b>Название:</b><span th:text="${game.name}">game name</span>
+    </p>
+    <p><b>Описание:</b><span th:text="${game.description}">game description</span></p>
+    <p><b>Разработчик:</b><span th:text="${game.developerCompany.name}">game developer company</span></p>
+    <p><b>Год выпуска:</b><span th:text="${game.issueYear}">game issue year</span></p>
+    <p th:if="${#strings.isEmpty(game.minimalSystemRequirements)}">
+        <b>Минимальные системные требования:</b><span th:text="${game.minimalSystemRequirements}">game minimal system requirements</span>
+    </p>
+    <p th:if="${#strings.isEmpty(game.recommendedSystemRequirements)}">
+        <b>Рекомендуемые системные требования:</b><span th:text="${game.recommendedSystemRequirements}">game recommended system requirements</span>
+    </p>
+    <p><b>Возрастное ограничение(ESRB):</b><span th:text="${game.ageLimit.name}">game age limit</span></p>
+    <div>
+        <b>Жанры:</b>
+        <p th:if="${!#arrays.isEmpty(genres)}" th:each="genre: ${genres}" th:text="${genre.name}">game genre</p>
+    </div>
+    <div>
+        <b>Поджанры:</b>
+        <p th:if="${!#arrays.isEmpty(game.subgenres)}" th:each="subgenre: ${game.subgenres}" th:text="${subgenre.name}">game subgenre</p>
+    </div>
+    <p><b>Цены:</b></p>
+        <table border="1">
+            <col width="120"><col width="50"><col width="100"><col width="150">
+            <tr>
+                <th>Платформа</th>
+                <th>Стоимость</th>
+                <th>Доступно к заказу</th>
+                <th>Положить в корзину</th>
+            </tr>
+            <tr th:each="platformPrice: ${game.gamePrices}">
+                <td th:text="${platformPrice.gameGamePlatform.gamePlatform.name}">platform name</td>
+                <td align="center" th:text="${platformPrice.price}">price</td>
+                <td align="center" th:text="${platformPrice.storage.number}">number in storage</td>
+                <td><a th:if="${platformPrice.storage.number} > 0" href="#">Положить в корзину</a></td>
+            </tr>
+        </table>
+    <div th:if="${!#arrays.isEmpty(game.screenshots)}">
+        <p><b>Скриншоты:</b></p>
+        <img th:each="screenshot: ${game.screenshots}" th:src="@{${screenshot.gameScreenshot.screenshotUrl}}" align="left" vspace="15" hspace="25" width="250" alt="screenshot"/>
+    </div>
+</body>
+</html>

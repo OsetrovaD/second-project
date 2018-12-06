@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Вход</title>
+</head>
+<body>
+    <div th:insert="~{header}"></div>
+    <br>
+    <p style="padding-top: 20px"><b th:text="#{login.autorize}">Authorize, please</b></p>
+    <form th:action="@{/login}" method="post">
+        <input type="text" id="login_01" name="username" size="30" required>
+        <label for="login_01"><span>*</span><span th:text="#{login.username}">Username</span></label><br>
+        <input type="password" id="pass_01" name="password" size="30" required>
+        <label for="pass_01"><span>*</span><span th:text="#{login.pass}">Password</span></label><br>
+        <input type="submit" th:value="#{login.button}"/>
+    </form>
+    <p><a th:href="@{/}" th:text="#{button.back}">Back</a>
+</body>
+</html>
