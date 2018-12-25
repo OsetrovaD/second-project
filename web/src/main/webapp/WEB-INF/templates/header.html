@@ -4,47 +4,19 @@
 <head>
     <meta charset="UTF-8">
     <title>Header</title>
-    <style type="text/css">
-        .nav {
-            list-style: none;
-            margin: 0;
-            padding-left: 0;
-            width: 70%;
-            float: left;
-            display: inline;
-        }
-        .menu {
-            display: inline-block;
-            width: 7em;
-            padding:10px;
-            background-color: #f4f4f4;
-            border: 1px solid #333333;
-            text-decoration: none;
-            color: #333333;
-            text-align: center;
-        }
-        .exit {
-            float: right;
-            margin: 0;
-            padding-left: 0;
-        }
-        .lang {
-            float: right;
-            margin: 0;
-            padding-right: 80px;
-        }
-    </style>
 </head>
 <body>
+    <link rel="stylesheet" th:href="@{/css/header-style.css}">
     <div class="nav" sec:authorize="isAuthenticated()">
         <a class="menu" th:href="@{/user}" th:text="#{header.home}">Home</a>
         <a class="menu" th:href="@{/all-games}" th:text="#{header.allgames}">All games</a>
         <a class="menu" th:href="@{/game-search}" th:text="#{header.gamesearch}">Game search</a>
         <a class="menu" th:href="@{/user-info}" th:text="#{header.userinfo}">User info</a>
-        <a class="menu" th:href="@{/comments}" th:text="#{header.comments}">Comments</a>
-        <a class="menu" th:href="@{/orders}" th:text="#{header.userorders}">Orders</a>
-        <a sec:authorize="hasAnyAuthority('ADMIN')" class="menu" th:href="@{/all-orders}" th:text="#{header.allorders}">All orders</a>
-        <a class="menu" th:if="${!#arrays.isEmpty(basket)}" th:href="@{/basket}" th:text="#{header.ordering}">Basket</a>
+        <a class="menu" th:href="@{/user-comments}" th:text="#{header.comments}">Comments</a>
+        <a class="menu" th:href="@{/user-orders}" th:text="#{header.userorders}">Orders</a>
+        <a sec:authorize="hasAnyAuthority('ADMIN', 'SUPER_ADMIN')" class="menu" th:href="@{/all-orders}" th:text="#{header.allorders}">All orders</a>
+        <a class="menu" th:if="${!#arrays.isEmpty(session.basket) && !#arrays.isEmpty(session.basket.gamesInBasket)}"
+           th:href="${!#arrays.isEmpty(session.newOrderParameters)} ? @{/check-order-parameter} : @{/basket}" th:text="#{header.ordering}">Basket</a>
     </div>
     <form class="exit" th:fragment="logout" th:action="@{/logout}" th:method="post">
         <input type="submit" align="right" th:value="#{header.logout}"/>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>Информация об игре</title>
@@ -11,7 +12,8 @@
     </style>
 </head>
 <body>
-    <p style="padding-top: 20px">
+<div th:insert="~{header}"></div>
+    <p style="padding-top: 50px">
         <img th:src="@{${game.image}}" vspace="15" hspace="25" width="250"/>
         <b>Название:</b><span th:text="${game.name}">game name</span>
     </p>
@@ -27,7 +29,7 @@
     <p><b>Возрастное ограничение(ESRB):</b><span th:text="${game.ageLimit.name}">game age limit</span></p>
     <div>
         <b>Жанры:</b>
-        <p th:if="${!#arrays.isEmpty(genres)}" th:each="genre: ${genres}" th:text="${genre.name}">game genre</p>
+        <p th:if="${!#arrays.isEmpty(genres)}" th:each="genre: ${genres}" th:text="${genre}">game genre</p>
     </div>
     <div>
         <b>Поджанры:</b>
@@ -35,23 +37,29 @@
     </div>
     <p><b>Цены:</b></p>
         <table border="1">
-            <col width="120"><col width="50"><col width="100"><col width="150">
+            <col width="120"><col width="50"><col width="100"><col width="150"><col width="150">
             <tr>
                 <th>Платформа</th>
                 <th>Стоимость</th>
                 <th>Доступно к заказу</th>
                 <th>Положить в корзину</th>
+                <th sec:authorize="hasAnyAuthority('ADMIN', 'SUPER_ADMIN')">Изменить количество на складе</th>
             </tr>
             <tr th:each="platformPrice: ${game.gamePrices}">
-                <td th:text="${platformPrice.gameGamePlatform.gamePlatform.name}">platform name</td>
+                <td th:text="${platformPrice.gamePlatform.name}">platform name</td>
                 <td align="center" th:text="${platformPrice.price}">price</td>
-                <td align="center" th:text="${platformPrice.storage.number}">number in storage</td>
-                <td><a th:if="${platformPrice.storage.number} > 0" href="#">Положить в корзину</a></td>
+                <td align="center" th:text="${platformPrice.numberInStorage}">number in storage</td>
+                <td><a th:if="${platformPrice.numberInStorage} > 0" th:href="@{/add-to-basket(id=${platformPrice.id})}">Положить в корзину</a></td>
+                <td sec:authorize="hasAnyAuthority('ADMIN', 'SUPER_ADMIN')">
+                    <a th:href="@{/change-number-in-storage(id=${platformPrice.id})}">Изменить количество</a>
+                </td>
             </tr>
         </table>
+    <p><a th:href="@{/game-comments(id=${game.id})}">Комментарии</a></p>
+    <p><a th:href="@{/add-comment(id=${game.id})}">Добавить комментарий</a></p>
     <div th:if="${!#arrays.isEmpty(game.screenshots)}">
         <p><b>Скриншоты:</b></p>
-        <img th:each="screenshot: ${game.screenshots}" th:src="@{${screenshot.gameScreenshot.screenshotUrl}}" align="left" vspace="15" hspace="25" width="250" alt="screenshot"/>
+        <img th:each="screenshot: ${game.screenshots}" th:src="@{${screenshot.screenshotUrl}}" align="left" vspace="15" hspace="25" width="250" alt="screenshot"/>
     </div>
 </body>
 </html>

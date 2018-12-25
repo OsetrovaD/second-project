@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Поиск по платформе</title>
+</head>
+<body>
+<div th:insert="~{header}"></div>
+<br>
+<p style="padding-top: 20px"><b>Список платформ:</b></p>
+<form th:action="@{/search-by-platform}" th:method="post">
+    <div th:each="platform: ${platforms}">
+        <input type="radio" name="search_platform" th:value="${platform.name}">
+        <span th:text="${platform.name}">Platform name</span>
+    </div>
+    <input type="submit" value="Выбрать">
+</form>
+</body>
+</html>

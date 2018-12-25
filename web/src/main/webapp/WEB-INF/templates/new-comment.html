@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Добавить комментарий</title>
+</head>
+<body>
+    <div th:insert="~{header}"></div>
+    <br>
+    <p style="padding-top: 20px">Введите текст:</p>
+    <form th:action="@{/add-comment}" th:method="post" th:object="${newComment}">
+        <textarea th:field="*{text}" placeholder="Комментарий"></textarea><br>
+        <input type="hidden" th:field="*{gameId}">
+        <input type="submit" value="Отправить">
+    </form>
+</body>
+</html>

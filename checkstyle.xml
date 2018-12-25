@@ -114,7 +114,10 @@
             <property name="severity" value="warning"/>
         </module>
         <module name="MethodLength"/>
-        <module name="ParameterNumber"/>
+        <module name="ParameterNumber">
+            <property name="max" value="10"/>
+            <property name="ignoreOverriddenMethods" value="true"/>
+        </module>
 
 
         <!-- Checks for whitespace                               -->

@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Интернет-магазин компьютерных игр</title>
+    <title th:text="#{hellopage.pagetitle}">Интернет-магазин компьютерных игр</title>
     <style type="text/css">
         h1 {
             background-color: #f4f4f4;
@@ -23,11 +23,11 @@
     </style>
 </head>
 <body>
-    <div th:insert="~{header}"></div>
+    <div th:insert="~{header::language}"></div>
     <br>
     <p style="padding-top: 20px"></p>
     <h1 th:text="#{hellopage.greeting}">Greeting</h1>
     <h2 align="center" th:text="#{hellopage.menu}">Menu</h2>
-    <p align="center"><a th:href="@{/login}" class="button" th:text="#{hellopage.enter}">Enter</a> <a th:href="@{/register-page}" class="button" th:text="#{hellopage.register}">Register</a></p>
+    <p align="center"><a th:href="@{/login}" class="button" th:text="#{hellopage.enter}">Enter</a> <a th:href="@{/register}" class="button" th:text="#{hellopage.register}">Register</a></p>
 </body>
 </html>

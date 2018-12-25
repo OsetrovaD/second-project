@@ -32,4 +32,11 @@ public class SimpleUser extends User {
         super(login, password, email, role);
         this.lastVisitDate = lastVisitDate;
     }
+
+    public SimpleUser(String login, String password, String firstName,
+                      String lastName, String phoneNumber, String address,
+                      String email, Role role, LocalDate lastVisitDate) {
+        super(login, password, firstName, lastName, phoneNumber, address, email, role);
+        this.lastVisitDate = lastVisitDate;
+    }
 }

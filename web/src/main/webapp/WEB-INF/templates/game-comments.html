@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Комментарии к игре</title>
+</head>
+<body>
+    <div th:insert="~{header}"></div>
+    <h3 style="padding-top: 50px">Комментарии:</h3>
+    <table>
+        <col width="200"><col width="450"><col width="200"><col width="200">
+            <tr>
+                <th align="left">Пользователь</th>
+                <th align="left">Комментарий</th>
+                <th align="left">Дата добавления</th>
+                <th align="left"></th>
+            </tr>
+            <tr th:if="${!#lists.isEmpty(gameComments)}" th:each="comment: ${gameComments}">
+                <td><a th:href="@{/user-comments(id=${comment.userInfo.id})}" th:text="${comment.userInfo.login}">Username</a></td>
+                <td th:text="${comment.text}">Text</td>
+                <td th:text="${comment.date}">Date</td>
+                <td><a th:if="${#strings.equals(comment.userInfo.login, username)}" th:href="@{/delete-comment(id=${comment.id}, gameId=${comment.gameId})}">Удалить комментарий</a></td>
+            </tr>
+    </table>
+</body>
+</html>

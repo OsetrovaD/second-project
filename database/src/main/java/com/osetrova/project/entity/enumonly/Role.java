@@ -7,7 +7,8 @@ import java.util.Arrays;
 @Getter
 public enum Role {
     USER("Пользователь"),
-    ADMIN("Администратор");
+    ADMIN("Администратор"),
+    SUPER_ADMIN("Суперадминистратор");
 
     private String name;
 

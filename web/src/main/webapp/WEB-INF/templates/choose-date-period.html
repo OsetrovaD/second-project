@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Поиск заказов по временному промежутку</title>
+</head>
+<body>
+    <div th:insert="~{header}"></div>
+    <br>
+    <p style="padding-top: 20px"><b>Показать заказы в период</b></p>
+    <form th:action="@{/order-search-result}" th:method="post" th:object="${datePeriod}">
+        <label><b>c</b>
+            <input type="date" th:field="*{startDate}">
+        </label><br>
+        <label><b>по</b>
+            <input type="date" th:field="*{endDate}">
+        </label><br>
+        <input type="submit" value="Выбрать">
+    </form>
+</body>
+</html>

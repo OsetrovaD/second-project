@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Параметры заказа</title>
+</head>
+<body>
+<div th:insert="~{header}"></div>
+<br>
+<p style="padding-top: 20px"><b>Проверьте правильность выбранных игр:</b></p>
+<table border="1">
+    <col width="200"><col width="200"><col width="50"><col width="50"><col width="50"><col width="170">
+    <tr>
+        <th align="left">Название</th>
+        <th align="left">Платформа</th>
+        <th align="left">Цена</th>
+        <th align="left">Количество</th>
+    </tr>
+    <tr th:each="item: ${session.basket.gamesInBasket}">
+        <td><a th:href="@{/game-info(id=${item.gameId})}" th:text="${item.gameName}">Game name</a></td>
+        <td th:text="${item.gamePlatform.name}">Platform name</td>
+        <td align="center" th:text="${item.price}">Price</td>
+        <td align="center" th:text="${item.number}">Number</td>
+    </tr>
+</table>
+<br>
+<p>
+    <a th:href="@{/basket}">Вернуться в корзину</a> |
+    <a th:href="@{/all-games}">Вернуться к списку всех игр</a>
+</p>
+<p><b>Если всё верно, выберите параметры заказа:</b></p>
+<form th:action="@{/order-parameter}" th:method="post" th:object="${orderParameter}">
+   <p>
+       <span>Выберите способ оплаты:</span><br>
+       <select th:field="*{paymentForm}">
+           <option th:each="paymentForm: ${paymentForms}" th:value="${paymentForm}" th:text="${paymentForm.name}">
+               Payment form
+           </option>
+       </select>
+   </p>
+    <p>
+        <span>Выберите способ доставки:</span><br>
+        <select th:field="*{deliveryMethod}">
+            <option th:each="deliveryMethod: ${deliveryMethods}" th:value="${deliveryMethod}" th:text="${deliveryMethod.name} + ' (' + ${deliveryMethod.price} + ' p)'">
+                Delivery method
+            </option>
+        </select>
+    </p>
+    <input type="submit" value="Продолжить оформление">
+</form>
+</body>
+</html>

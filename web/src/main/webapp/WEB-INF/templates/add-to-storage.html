@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Добавить на склад</title>
+</head>
+<body>
+    <div th:insert="~{header}"></div>
+    <br>
+    <form style="padding-top: 50px" th:action="@{/change-number-in-storage}" th:method="post" th:object="${storageData}">
+        <label>Сколько штук добавить на склад:
+            <input type="text" th:field="*{number}" pattern="[0-9]*">
+            <input type="hidden" th:field="*{gameGamePlatformId}">
+            <input type="submit" value="Добавить">
+        </label>
+    </form>
+</body>
+</html>

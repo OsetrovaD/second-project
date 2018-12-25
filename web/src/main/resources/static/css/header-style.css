@@ -1,0 +1,28 @@
+.nav {
+    list-style: none;
+    margin: 0;
+    padding-left: 0;
+    width: 70%;
+    float: left;
+    display: inline;
+}
+.menu {
+    display: inline-block;
+    width: 7em;
+    padding:7px;
+    background-color: #f4f4f4;
+    border: 1px solid #333333;
+    text-decoration: none;
+    color: #333333;
+    text-align: center;
+}
+.exit {
+    float: right;
+    margin: 0;
+    padding-left: 0;
+}
+.lang {
+    float: right;
+    margin: 0;
+    padding-right: 80px;
+}

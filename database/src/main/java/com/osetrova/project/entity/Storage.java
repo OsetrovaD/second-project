@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Version;
 import java.time.LocalDate;
 
 @AllArgsConstructor
@@ -39,4 +40,13 @@ public class Storage implements BaseEntity<Long> {
     @OneToOne
     @JoinColumn(name = "game_game_platform_id")
     private GamePrice gamePrice;
+
+    @Version
+    @Column(name = "version")
+    private Long version;
+
+    public Storage(Short number, LocalDate lastAdditionDate) {
+        this.number = number;
+        this.lastAdditionDate = lastAdditionDate;
+    }
 }

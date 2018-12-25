@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+         xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd">
+
+    <defaultCache maxEntriesLocalHeap="10000" eternal="false"
+                  timeToIdleSeconds="120" timeToLiveSeconds="120" diskSpoolBufferSizeMB="30"
+                  maxEntriesLocalDisk="10000000" diskExpiryThreadIntervalSeconds="120"
+                  memoryStoreEvictionPolicy="LRU" statistics="true">
+        <persistence strategy="localTempSwap"/>
+    </defaultCache>
+
+    <cache name="rarely-changing-entities"
+           maxElementsInMemory="500"
+           eternal="false"
+           timeToLiveSeconds="600"
+           timeToIdleSeconds="480"/>
+    <cache name="games"
+           maxElementsInMemory="500"
+           eternal="false"
+           timeToLiveSeconds="120"
+           timeToIdleSeconds="30"/>
+    <cache name="users"
+           maxElementsInMemory="500"
+           eternal="false"
+           timeToLiveSeconds="60"
+           timeToIdleSeconds="30"/>
+</ehcache>

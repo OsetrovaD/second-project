@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Корзина</title>
+</head>
+<body>
+<div th:insert="~{header}"></div>
+<br>
+<form id="form" th:action="@{/basket}" th:method="post" style="padding-top: 50px" th:object="${basket}">
+<table border="1">
+    <col width="200"><col width="200"><col width="50"><col width="50"><col width="50"><col width="170">
+    <tr>
+        <th align="left">Название</th>
+        <th align="left">Платформа</th>
+        <th align="left">Цена</th>
+        <th align="left">Количество</th>
+        <th align="left">Максимально возможное количество</th>
+        <th align="left"></th>
+    </tr>
+    <tr th:each="item, stat: *{gamesInBasket}">
+        <td><a th:href="@{/game-info(id=${item.gameId})}" th:text="${item.gameName}">Game name</a></td>
+        <td th:text="${item.gamePlatform.name}">Platform name</td>
+        <td align="center" th:text="${item.price}">Price</td>
+        <td align="center">
+            <input form="form" type="text" size="4" pattern="[0-9]+" th:field="*{gamesInBasket[__${stat.index}__].number}">
+            <input form="form" type="hidden" th:field="*{gamesInBasket[__${stat.index}__].id}">
+            <input form="form" type="hidden" th:field="*{gamesInBasket[__${stat.index}__].gameId}">
+            <input form="form" type="hidden" th:field="*{gamesInBasket[__${stat.index}__].numberInStorage}">
+            <input form="form" type="hidden" th:field="*{gamesInBasket[__${stat.index}__].price}">
+            <input form="form" type="hidden" th:field="*{gamesInBasket[__${stat.index}__].gameName}">
+            <input form="form" type="hidden" th:field="*{gamesInBasket[__${stat.index}__].gamePlatform}">
+        </td>
+        <td align="center" th:text="${item.numberInStorage}">Number in storage</td>
+        <td align="center"><a th:href="@{/delete-from-basket(id=${item.id})}">Удалить из корзины</a></td>
+    </tr>
+</table>
+<br>
+<input form="form" th:if="${!#arrays.isEmpty(basket.gamesInBasket)}" type="submit" value="Продолжить оформление заказа"><br>
+</form>
+</body>
+</html>

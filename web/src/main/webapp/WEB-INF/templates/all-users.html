@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Пользователи</title>
+</head>
+<body>
+    <div th:insert="~{header}"></div>
+    <br>
+    <h3 style="padding-top: 20px">Администраторы</h3>
+    <table width="1100"  border="1">
+        <col width="150"><col width="150"><col width="150"><col width="150"><col width="150"><col width="100"><col width="100"><col width="100"><col width="150"><col width="150">
+        <tr>
+            <th align="left">Логин</th>
+            <th align="left">Имя</th>
+            <th align="left">Фамилия</th>
+            <th align="left">e-mail</th>
+            <th align="left">Адрес</th>
+            <th align="left">Номер телефона</th>
+            <th align="left" sec:authorize="hasAnyAuthority('SUPER_ADMIN')">Зарплата</th>
+            <th align="left">Комментарии</th>
+            <th align="left" sec:authorize="hasAnyAuthority('SUPER_ADMIN')">Изменить роль</th>
+            <th align="left" sec:authorize="hasAnyAuthority('SUPER_ADMIN')">Изменить зарплату</th>
+        </tr>
+        <tr th:each="admin: ${admins}">
+            <td th:text="${admin.login}"></td>
+            <td th:text="${admin.firstName}"></td>
+            <td th:text="${admin.lastName}"></td>
+            <td th:text="${admin.email}"></td>
+            <td th:text="${admin.address}"></td>
+            <td th:text="${admin.phoneNumber}"></td>
+            <td th:text="${admin.salary} + р" sec:authorize="hasAnyAuthority('SUPER_ADMIN')"></td>
+            <td><a th:href="@{/user-comments(id=${admin.id})}">Комментарии</a></td>
+            <td sec:authorize="hasAnyAuthority('SUPER_ADMIN')">
+                <a th:if="${#strings.equals('Администратор', admin.role.name) && !#strings.equals(username, admin.login)}" th:href="@{/change-role-to-user(id=${admin.id})}">
+                    Изменить роль пользователя
+                </a>
+            </td>
+            <td sec:authorize="hasAnyAuthority('SUPER_ADMIN')">
+                <a th:if="${#strings.equals('Администратор', admin.role.name) && !#strings.equals(username, admin.login)}" th:href="@{/change-salary(id=${admin.id})}">
+                    Изменить зарплату
+                </a>
+            </td>
+        </tr>
+    </table>
+    <br>
+    <h3>Пользователи</h3>
+    <table width="1100" border="1">
+        <col width="150"><col width="150"><col width="150"><col width="150"><col width="150"><col width="100"><col width="100"><col width="100"><col width="150">
+        <tr>
+            <th align="left">Логин</th>
+            <th align="left">Имя</th>
+            <th align="left">Фамилия</th>
+            <th align="left">e-mail</th>
+            <th align="left">Адрес</th>
+            <th align="left">Номер телефона</th>
+            <th align="left">Дата последнего посещения</th>
+            <th align="left">Комментарии</th>
+            <th align="left" sec:authorize="hasAnyAuthority('SUPER_ADMIN')">Изменить роль</th>
+        </tr>
+        <tr th:each="user: ${users}">
+            <td th:text="${user.login}"></td>
+            <td th:text="${user.firstName}"></td>
+            <td th:text="${user.lastName}"></td>
+            <td th:text="${user.email}"></td>
+            <td th:text="${user.address}"></td>
+            <td th:text="${user.phoneNumber}"></td>
+            <td th:text="${user.lastVisitDate}"></td>
+            <td><a th:href="@{/user-comments(id=${user.id})}">Комментарии</a></td>
+            <td sec:authorize="hasAnyAuthority('SUPER_ADMIN')">
+                <a th:href="@{/change-role-to-admin(id=${user.id})}">
+                    Изменить роль пользователя
+                </a>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

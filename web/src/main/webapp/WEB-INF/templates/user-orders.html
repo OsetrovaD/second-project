@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Заказы пользователя</title>
+</head>
+<body>
+    <div th:insert="~{header}"></div>
+    <br>
+    <p style="padding-top: 20px"><b>Список заказов:</b></p>
+    <table border="1">
+        <col width="7"><col width="150"><col width="150"><col width="150"><col width="100"><col width="100">
+        <tr>
+            <th>Номер</th>
+            <th>Состояние</th>
+            <th>Способ оплаты</th>
+            <th>Способ доставки</th>
+            <th>Дата оформления</th>
+            <th>Дата доставки</th>
+        </tr>
+        <tr th:each="order: ${userOrders}">
+            <td align="center"><a th:href="@{/order-info(id=${order.id})}" th:text="${order.id}">Order number</a></td>
+            <td th:text="${order.condition.name}">Condition</td>
+            <td th:text="${order.paymentForm.name}">Payment form</td>
+            <td th:text="${order.deliveryMethod.name}">Delivery method</td>
+            <td th:text="${order.date}">Date</td>
+            <td th:text="${order.deliveryDate}">Delivery date</td>
+        </tr>
+    </table>
+</body>
+</html>

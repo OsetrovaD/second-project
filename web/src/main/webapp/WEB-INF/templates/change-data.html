@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Изменение персональных данных</title>
+</head>
+<body>
+    <div th:insert="~{header}"></div>
+    <br>
+    <form style="padding-top: 50px" th:action="@{/change-data}" th:method="post" th:object="${userData}">
+        <input type="text" th:field="*{firstName}" size="60"><span>Имя</span><br>
+        <input type="text" th:field="*{lastName}" size="60"><span>Фамилия</span><br>
+        <input type="text" pattern="[0-9]{11}" placeholder="80290000000" th:field="*{phoneNumber}" size="30"><span>Номер телефона</span><br>
+        <textarea th:field="*{address}" placeholder="Адрес"></textarea><br>
+        <input type="submit" value="Изменить">
+    </form>
+</body>
+</html>
