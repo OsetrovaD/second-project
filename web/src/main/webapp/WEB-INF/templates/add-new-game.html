@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Новая игра</title>
+</head>
+<body>
+    <div th:insert="~{header}"></div>
+    <br>
+    <p style="padding-top: 20px"><b>Введите параметры:</b></p>
+    <form th:action="@{/add-new-game}" th:method="post" th:object="${newGame}">
+            <label for="name">Название</label><br>
+            <input type="text" id="name" th:field="*{name}" size="80" required><br>
+
+            <label for="game_description">Описание</label><br>
+            <textarea th:field="*{description}" id="game_description" required></textarea><br>
+
+            <label for="min_sys_req">Минимальные системные требования (только для игр на ПК)</label><br>
+            <textarea th:field="*{minimalSystemRequirements}" id="min_sys_req"></textarea><br>
+
+            <label for="max_sys_req">Рекоммендуемые системные требования (только для игр на ПК)</label><br>
+            <textarea th:field="*{recommendedSystemRequirements}" id="max_sys_req"></textarea><br>
+
+            <label for="issue_year">Год выпуска</label><br>
+            <input type="text" id="issue_year" pattern="\d{4}" th:field="*{issueYear}" size="4" required><br>
+
+            <label for="poster">Ссылка на постер</label><br>
+            <input type="text" id="poster" th:field="*{image}" size="80" required><br>
+
+            <label>Cкриншоты<br>
+                <input type="text" th:field="*{screenshots}" size="100"><br>
+                <input type="text" th:field="*{screenshots}" size="100"><br>
+                <input type="text" th:field="*{screenshots}" size="100"><br>
+            </label><br>
+
+            <label>Возрастное ограничение(ESRB)
+                <select th:field="*{ageLimit}"  required>
+                    <option th:each="ageLimit: ${ageLimits}" th:value="${ageLimit}" th:text="${ageLimit.name}">Age limit</option>
+                </select>
+            </label><br>
+
+            <label>Разработчик
+                <select th:field="*{developerCompany}"  required>
+                    <option th:each="company: ${companies}" th:value="${company.name}" th:text="${company.name}">
+                        Developer company
+                    </option>
+                </select>
+            </label><br>
+
+            <label>Поджанры
+            <div th:each="subgenre: ${subgenres}">
+                <input type="checkbox" th:field="*{subgenres}"  th:value="${subgenre.name}">
+                <span th:text="${subgenre.name}">Subgenre name</span>
+            </div>
+        </label><br>
+
+        <table width="550">
+            <col width="250"><col width="150"><col width="150">
+            <tr>
+                <th align="left"><b>Платформа</b></th>
+                <th align="left"><b>Цена</b></th>
+                <th align="left"><b>На склад (шт.)</b></th>
+            </tr>
+            <tr th:each="platform: ${platforms}">
+                <td><input type="checkbox" th:name="game_platforms" th:value="${platform.name}">
+                    <span th:text="${platform.name}"></span>
+                </td>
+                <td><input type="text" th:name="${platform.name}"></td>
+                <td><input type="text" th:name="${platform.name} + _1"></td>
+            </tr>
+        </table>
+        <input type="submit" value="Сохранить">
+    </form>
+</body>
+</html>

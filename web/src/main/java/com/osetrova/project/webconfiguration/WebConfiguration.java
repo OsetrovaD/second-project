@@ -10,12 +10,15 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 @ComponentScan("com.osetrova.project.controller")
 @EnableWebMvc
-@Import(value = {ThymeleafConfiguration.class, InternationalizationConfiguration.class})
+@Import(value = {ThymeleafConfiguration.class,
+        InternationalizationConfiguration.class,
+        WebAspectConfiguration.class
+        })
 public class WebConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/PostersAndScreenshots/**")
-                .addResourceLocations("classpath:/static/PostersAndScreenshots/");
+        registry.addResourceHandler("/PostersAndScreenshots/**", "/css/**")
+                .addResourceLocations("classpath:/static/PostersAndScreenshots/", "classpath:/static/css/");
     }
 }

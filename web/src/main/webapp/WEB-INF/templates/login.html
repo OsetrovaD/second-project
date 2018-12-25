@@ -2,10 +2,10 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Вход</title>
+    <title th:text="#{loginpage.pagetitle}">Вход</title>
 </head>
 <body>
-    <div th:insert="~{header}"></div>
+    <div th:insert="~{header::language}"></div>
     <br>
     <p style="padding-top: 20px"><b th:text="#{login.autorize}">Authorize, please</b></p>
     <form th:action="@{/login}" method="post">

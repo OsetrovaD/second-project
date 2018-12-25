@@ -104,6 +104,11 @@ CREATE TABLE computer_games_e_shop_storage.simple_user_detail (
   last_visit_date DATE
 );
 
+CREATE TABLE computer_games_e_shop_storage.interesting_fact (
+  id BIGSERIAL PRIMARY KEY,
+  fact TEXT
+);
+
 INSERT INTO computer_games_e_shop_storage.game_developer_company (name)
 VALUES
   ('Bethesda Softworks'),
@@ -908,4 +913,20 @@ VALUES
   ((SELECT id FROM computer_games_e_shop_storage.order_data WHERE user_id = (SELECT id FROM computer_games_e_shop_storage.user_data WHERE login = 'Cake') AND date = '2018-09-25'),
    1, (SELECT id FROM computer_games_e_shop_storage.game_game_platform
         WHERE game_id = (SELECT id FROM computer_games_e_shop_storage.game WHERE name = 'Syberia 3') AND game_platform = 'PLAYSTATION_4'));
+
+INSERT INTO computer_games_e_shop_storage.interesting_fact (fact)
+VALUES
+    ('Изначально Лару Крофт должны были звать Лаура Круз.'),
+    ('The Sims входила в десятку самых продаваемых игр Великобритании на протяжении двух лет.'),
+    ('Самая первая компьютерная игра была сделана в 1961 году студентом Стивом Расселом. Называлась она Space Wars.'),
+    ('Самой продаваемой игрой за всю историю является Tetris. Всего было продано более 40 млн копий этой игры.'),
+    ('Крупнейшей фирмой-разработчиком компьютерных игр является компания Electronic Arts. Ежегодно эта компания издает игр на сумму более 3 млрд долларов.'),
+    ('Nintendo с японского переводится как "Оставь удачу небу".'),
+    ('Лицензионные диски FIFA 2001 были с запахом травы.'),
+    ('Максимальный рекорд, зарегистрированный в игре Pac-Man, составляет 3,333,360 очков.'),
+    ('Средний возраст постоянных покупателей компьютерных игр, по статистике, составляет 40 лет.'),
+    ('Компьютерная игра Halo2 принесла разработчикам в первый день продаж 125 млн долларов - больше, чем любой фильм в истории Голливуда.'),
+    ('Самая дорогостоящая в плане разработки игра называется ShenMue. Она была создана для Sega Dreamcast и обошлась разработчикам в 20 млн долларов.'),
+    ('Самым большим долгостроем в истории компьютерных игр является игра Prey, разработка которой впервые была заявлена в 1995 году, но которая вышла только в июне 2006. За это время Prey сменил несколько концепций и команд разработчиков.'),
+    ('Во многих играх разработчики вставляют невзначай свои имена. Например, в Half Life 2 фамилии разработчиков указаны на шкафчиках в раздевалке, в Fable the Lost Chapters имя директора компании увековечено на могильной плите. И таких игр очень много.');
 

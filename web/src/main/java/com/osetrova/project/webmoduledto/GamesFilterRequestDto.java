@@ -1,4 +1,4 @@
-package com.osetrova.project.requestdto;
+package com.osetrova.project.webmoduledto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

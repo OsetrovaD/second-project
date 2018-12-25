@@ -1,14 +1,14 @@
 package com.osetrova.project.entity;
 
 
+import com.osetrova.project.entity.baseentity.BaseEntity;
+import com.osetrova.project.entity.enumonly.AgeLimit;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import com.osetrova.project.entity.baseentity.BaseEntity;
-import com.osetrova.project.entity.enumonly.AgeLimit;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;

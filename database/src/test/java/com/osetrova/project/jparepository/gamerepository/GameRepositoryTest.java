@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.contains;
@@ -61,6 +62,13 @@ public class GameRepositoryTest {
     }
 
     @Test
+    public void findAllOrderByNameTest() {
+        List<Game> games = gameRepository.findAllByOrderByNameAsc();
+        List<String> gameNames = games.stream().map(Game::getName).collect(Collectors.toList());
+        assertThat(gameNames, contains("Diablo III", "Far Cry 3", "Mass Effect", "Mass Effect 3", "Syberia 3"));
+    }
+
+    @Test
     public void filterGamesTest() {
         GameFilterDto filters = GameFilterDto.of(2012, AgeLimit.MATURE, 40);
         LimitOffsetDto limitOffset = LimitOffsetDto.of(0, 0);
@@ -73,7 +81,7 @@ public class GameRepositoryTest {
 
     @Test
     public void findByIssueYearTest() {
-        List<Game> games = gameRepository.findByIssueYear(2012);
+        List<Game> games = gameRepository.findAllByIssueYear(2012);
         assertThat(games, hasSize(3));
     }
 
@@ -89,34 +97,6 @@ public class GameRepositoryTest {
 
         Optional<Game> game = gameRepository.findById(Objects.requireNonNull(gameId));
         assertTrue(game.isPresent());
-    }
-
-    @Test
-    public void updateTest() {
-        Optional<Game> diablo3 = gameRepository.findByNameIgnoreCase("Diablo III");
-        Long gameId = null;
-        Game game = null;
-
-        if (diablo3.isPresent()) {
-            gameId = diablo3.get().getId();
-        }
-        manager.clear();
-
-        Optional<Game> optionalGame = gameRepository.findById(Objects.requireNonNull(gameId));
-
-        if (optionalGame.isPresent()) {
-            game = optionalGame.get();
-        }
-        Objects.requireNonNull(game).setDescription("description");
-
-        Integer update = gameRepository.update(game, gameId);
-        assertThat(update, not(0));
-        manager.flush();
-        manager.detach(game);
-
-        Optional<Game> gameOptional = gameRepository.findById(gameId);
-        assertTrue(gameOptional.isPresent());
-        assertEquals("description", gameOptional.get().getDescription());
     }
 
     @Test
@@ -207,7 +187,7 @@ public class GameRepositoryTest {
             genreFromBD = genre.get();
         }
 
-        List<Game> games = gameRepository.findByGenre(genreFromBD);
+        List<Game> games = gameRepository.findAllByGenre(genreFromBD);
         assertThat(games, hasSize(3));
     }
 
@@ -220,7 +200,7 @@ public class GameRepositoryTest {
             subgenreFromBD = subgenre.get();
         }
 
-        List<Game> games = gameRepository.findBySubgenres(subgenreFromBD);
+        List<Game> games = gameRepository.findAllBySubgenres(subgenreFromBD);
         assertThat(games, hasSize(1));
     }
 }

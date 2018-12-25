@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Проверка данных заказа</title>
+</head>
+<body>
+<div th:insert="~{header}"></div>
+<br>
+<p style="padding-top: 20px"><b>Параметры заказа:</b></p>
+<table border="1">
+    <col width="200"><col width="50"><col width="50"><col width="50">
+    <tr>
+        <th>Название</th>
+        <th>Платформа</th>
+        <th>Количество</th>
+        <th>Цена</th>
+    </tr>
+    <tr th:each="item: ${session.basket.gamesInBasket}">
+        <td><a th:href="@{/game-info(id=${item.gameId})}" th:text="${item.gameName}">Game name</a></td>
+        <td align="center" th:text="${item.gamePlatform.name}">Platform name</td>
+        <td align="center" th:text="${item.number}">Number</td>
+        <td align="center" th:text="${item.price}">Price</td>
+    </tr>
+    <tr>
+        <td colspan="4" align="right">
+            <b>Итого: </b><span th:text="${gameSum}">Game sum</span>
+        </td>
+    </tr>
+    <tr>
+        <th colspan="2">Форма оплаты</th>
+        <th>Метод доставки</th>
+        <th>Цена</th>
+    </tr>
+    <tr>
+        <td colspan="2" align="center" th:text="${session.newOrderParameters.paymentForm.name}">Форма оплаты</td>
+        <td align="center" th:text="${session.newOrderParameters.deliveryMethod.name}">Метод доставки</td>
+        <td align="center" th:text="${session.newOrderParameters.deliveryMethod.price}">Цена</td>
+    </tr>
+    <tr>
+        <td colspan="4" align="right">
+            <b>Итоговая сумма заказа: </b><span th:text="${finalSum}">Final sum</span>
+        </td>
+    </tr>
+</table>
+<br>
+<p>
+    <a th:href="@{/order-parameter}">Вернуться к выбору параметров заказа</a>
+</p>
+<form th:action="@{/order-confirm}" th:method="post">
+    <input type="submit" value="Подтвердить заказ">
+</form>
+</body>
+</html>

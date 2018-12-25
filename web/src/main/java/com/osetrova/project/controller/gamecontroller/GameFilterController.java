@@ -4,7 +4,7 @@ import com.osetrova.project.dto.GameFilterDto;
 import com.osetrova.project.dto.LimitOffsetDto;
 import com.osetrova.project.entity.Game;
 import com.osetrova.project.entity.enumonly.AgeLimit;
-import com.osetrova.project.requestdto.GamesFilterRequestDto;
+import com.osetrova.project.webmoduledto.GamesFilterRequestDto;
 import com.osetrova.project.service.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

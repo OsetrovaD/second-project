@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Поиск по жанру</title>
+</head>
+<body>
+    <div th:insert="~{header}"></div>
+    <br>
+    <p style="padding-top: 20px"><b>Список жанров:</b></p>
+    <form th:action="@{/search-by-genre}" th:method="post">
+        <div th:each="genre: ${genres}">
+            <input type="radio" name="search_genre" th:value="${genre.name}">
+            <span th:text="${genre.name}">Genre name</span>
+        </div>
+        <input type="submit" value="Выбрать">
+    </form>
+</body>
+</html>

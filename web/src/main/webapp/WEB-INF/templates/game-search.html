@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Поиск игр</title>
+</head>
+<body>
+    <div th:insert="~{header}"></div>
+    <br>
+    <h3 style="padding-top: 20px">По какому параметру будем искать?</h3>
+    <form th:method="post" th:action="@{/game-search}">
+        <input type="radio" name="search_parameter" value="by_name" id="check_group_01" checked>
+        <label for="check_group_01">Название игры</label><br>
+        <input type="radio" name="search_parameter" value="by_platform" id="check_group_02">
+        <label for="check_group_02">Игровая платформа</label><br>
+        <input type="radio" name="search_parameter" value="by_genre" id="check_group_03">
+        <label for="check_group_03">Жанр</label><br>
+        <input type="radio" name="search_parameter" value="by_subgenre" id="check_group_04">
+        <label for="check_group_04">Поджанр</label><br>
+        <input type="radio" name="search_parameter" value="by_issue_year" id="check_group_05">
+        <label for="check_group_05">Год выпуска</label><br>
+        <input type="submit" value="Отправить">
+    </form>
+</body>
+</html>

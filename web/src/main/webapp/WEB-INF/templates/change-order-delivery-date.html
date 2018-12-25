@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Изменение даты доставки</title>
+</head>
+<body>
+    <div th:insert="~{header}"></div>
+    <br>
+    <form style="padding-top: 50px" th:action="@{/change-order-delivery-date}" th:method="post" th:object="${orderData}">
+        <label>Выберите дату:
+            <input type="date" th:field="*{deliveryDate}">
+        </label>
+        <input type="hidden" th:field="*{id}">
+        <input type="submit" value="Изменить">
+    </form>
+</body>
+</html>

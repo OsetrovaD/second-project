@@ -1,10 +1,10 @@
 package com.osetrova.project.controller.gamecontroller;
 
 import com.osetrova.project.entity.Game;
-import com.osetrova.project.entity.Genre;
 import com.osetrova.project.entity.enumonly.AgeLimit;
-import com.osetrova.project.requestdto.GamesFilterRequestDto;
 import com.osetrova.project.service.GameService;
+import com.osetrova.project.dto.gamedto.GameFullInfoDto;
+import com.osetrova.project.webmoduledto.GamesFilterRequestDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 @Controller
@@ -39,17 +38,12 @@ public class GameController {
 
     @GetMapping("/game-info")
     public String getGameInfo(Model model, @RequestParam("id") String id) {
-        Game game;
-        Optional<Game> gameById = gameService.findById(Long.valueOf(id));
+        GameFullInfoDto gameFullInfo = gameService.findById(Long.valueOf(id));
+        Set<String> genresNames = new HashSet<>();
+        gameFullInfo.getSubgenres().forEach(x -> genresNames.add(x.getGenreName()));
 
-        if (gameById.isPresent()) {
-            game = gameById.get();
-            Set<Genre> genres = new HashSet<>();
-            game.getSubgenres().forEach(x -> genres.add(x.getGenre()));
-
-            model.addAttribute("game", game);
-            model.addAttribute("genres", genres);
-        }
+        model.addAttribute("game", gameFullInfo);
+        model.addAttribute("genres", genresNames);
 
         return "game-info";
     }

@@ -1,15 +1,15 @@
 package com.osetrova.project.jparepository;
 
 import com.osetrova.project.entity.Comment;
-import com.osetrova.project.entity.Game;
-import com.osetrova.project.entity.User;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 
 public interface CommentRepository extends CrudRepository<Comment, Long> {
 
-    List<Comment> findAllByGame(Game game);
+    List<Comment> findAllByGameId(Long gameId);
 
-    List<Comment> findAllByUser(User user);
+    List<Comment> findAllByUserId(Long userId);
+
+    List<Comment> findAllByUserLogin(String login);
 }

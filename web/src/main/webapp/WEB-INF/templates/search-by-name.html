@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Поиск по названию</title>
+</head>
+<body>
+    <div th:insert="~{header}"></div>
+    <br>
+    <p style="padding-top: 20px">Название: </p>
+    <form th:method="post" th:action="@{/search-by-name}">
+        <label>
+            <input type="text" name="game_name" maxlength="60" required autofocus>
+        </label><span>*</span>
+        <input type="submit" value="Искать"><br>
+    </form>
+</body>
+</html>

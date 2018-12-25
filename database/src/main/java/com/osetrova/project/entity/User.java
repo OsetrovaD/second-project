@@ -78,6 +78,17 @@ public abstract class User implements BaseEntity<Long> {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private Set<Order> orders = new HashSet<>();
 
+    public User(String login, String password, String firstName, String lastName, String phoneNumber, String address, String email, Role role) {
+        this.login = login;
+        this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.phoneNumber = phoneNumber;
+        this.address = address;
+        this.email = email;
+        this.role = role;
+    }
+
     public User(String login, String password, String email, Role role) {
         this.login = login;
         this.password = password;

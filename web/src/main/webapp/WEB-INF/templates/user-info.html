@@ -5,6 +5,36 @@
     <title>Информация о пользователе</title>
 </head>
 <body>
-
+    <div th:insert="~{header}"></div>
+    <br>
+    <p style="padding-top: 20px"><b>Данные пользователя:</b></p>
+    <table border="1">
+        <col width="150"><col width="200">
+        <tr>
+            <td><b>Имя</b></td>
+            <td th:text="${userInfo.firstName}">First name</td>
+            <td><a th:href="@{/change-first-name}">Изменить</a></td>
+        </tr>
+        <tr>
+            <td><b>Фамилия</b></td>
+            <td th:text="${userInfo.lastName}">Last name</td>
+            <td><a th:href="@{/change-last-name}">Изменить</a></td>
+        </tr>
+        <tr>
+            <td><b>E-mail</b></td>
+            <td th:text="${userInfo.email}">E-mail</td>
+            <td><a th:href="@{/change-email}">Изменить</a></td>
+        </tr>
+        <tr>
+            <td><b>Номер телефона</b></td>
+            <td th:text="${userInfo.phoneNumber}">Phone number</td>
+            <td><a th:href="@{/change-phone-number}">Изменить</a></td>
+        </tr>
+        <tr>
+            <td><b>Адрес</b></td>
+            <td th:text="${userInfo.address}">Address</td>
+            <td><a th:href="@{/change-address}">Изменить</a></td>
+        </tr>
+    </table>
 </body>
 </html>
